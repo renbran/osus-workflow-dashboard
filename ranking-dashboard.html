@@ -18,6 +18,8 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+            color: #ffffff;
         }
 
         .loading-overlay {
@@ -36,6 +38,78 @@
         .fade-out {
             opacity: 0;
             transition: opacity 0.5s ease-out;
+        }
+
+        /* Enhanced text readability */
+        .text-enhanced {
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+        }
+
+        .text-enhanced-bold {
+            color: #ffffff !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-weight: 600;
+        }
+
+        .text-gold-enhanced {
+            color: #fbbf24 !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 600;
+        }
+
+        .bg-enhanced {
+            background: rgba(127, 29, 29, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .bg-card-enhanced {
+            background: rgba(127, 29, 29, 0.6) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        /* Button enhancements */
+        .btn-enhanced {
+            color: #ffffff !important;
+            background: rgba(127, 29, 29, 0.8) !important;
+            border: 2px solid rgba(251, 191, 36, 0.5) !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn-enhanced:hover {
+            background: rgba(251, 191, 36, 0.2) !important;
+            border-color: #fbbf24 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .btn-enhanced.active {
+            background: #fbbf24 !important;
+            color: #7f1d1d !important;
+            border-color: #fbbf24 !important;
+            text-shadow: none;
+        }
+
+        /* Select dropdown enhancements */
+        .select-enhanced {
+            background: rgba(127, 29, 29, 0.8) !important;
+            border: 2px solid rgba(251, 191, 36, 0.5) !important;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .select-enhanced:focus {
+            border-color: #fbbf24 !important;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3) !important;
+        }
+
+        .select-enhanced option {
+            background: #7f1d1d !important;
+            color: #ffffff !important;
         }
 
         /* Custom scrollbar */
@@ -340,27 +414,27 @@
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
                   </div>
                   <div>
-                    <h1 className="text-4xl font-bold text-white">OSUS Ranking Dashboard</h1>
-                    <p className="text-yellow-400/80 text-lg">Real Estate Performance Analytics & Rankings</p>
+                    <h1 className="text-4xl font-bold text-enhanced-bold">OSUS Ranking Dashboard</h1>
+                    <p className="text-gold-enhanced text-lg">Real Estate Performance Analytics & Rankings</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-4">
                     <Calendar className="text-yellow-400 w-6 h-6" />
-                    <div className="flex bg-red-800/50 backdrop-blur-sm rounded-xl p-2 border border-red-700/50">
+                    <div className="flex bg-enhanced backdrop-blur-sm rounded-xl p-2 border border-red-700/50">
                       {['Q1', 'Q2', 'Q3'].map(quarter => (
                         <button
                           key={quarter}
                           onClick={() => setActiveQuarter(quarter)}
-                          className={`px-6 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                          className={`px-6 py-3 rounded-lg transition-all duration-300 font-semibold btn-enhanced ${
                             activeQuarter === quarter 
-                              ? 'bg-yellow-400 text-red-900 shadow-lg transform scale-105' 
-                              : 'text-white hover:bg-red-700/50 hover:text-yellow-400'
+                              ? 'active' 
+                              : ''
                           }`}
                         >
-                          {quarter} 2025
-                          <span className="block text-xs opacity-75">
+                          <span className="text-enhanced-bold">{quarter} 2025</span>
+                          <span className="block text-xs opacity-75 text-enhanced">
                             {data.quarterCounts[quarter]} leads
                           </span>
                         </button>
@@ -373,7 +447,7 @@
                     <select 
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="bg-red-800/50 border border-red-700/50 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 backdrop-blur-sm"
+                      className="select-enhanced rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 backdrop-blur-sm"
                     >
                       <option value="all">🏆 All Categories</option>
                       <option value="Lead Generation">👥 Lead Generation</option>
@@ -381,7 +455,7 @@
                       <option value="Conversion">✅ Conversion</option>
                       <option value="Non-Viable">❌ Non-Viable</option>
                     </select>
-                    <div className="text-xs text-yellow-400/70">
+                    <div className="text-xs text-gold-enhanced">
                       {selectedCategory === 'all' ? 'Showing all metrics' : 
                        selectedCategory === 'Lead Generation' ? 'NEW + ATTEMPT leads' :
                        selectedCategory === 'Engagement' ? 'CONTACTED + OPTIONS SENT' :
@@ -398,12 +472,12 @@
                     { label: 'Active Agents', value: currentData.length, icon: Star, color: 'purple' },
                     { label: 'Avg Conversion Rate', value: `${(currentData.reduce((sum, agent) => sum + agent.conversionRate, 0) / currentData.length || 0).toFixed(1)}%`, icon: TrendingUp, color: 'yellow' }
                   ].map((stat, index) => (
-                    <div key={index} className="bg-red-800/30 backdrop-blur-sm rounded-xl p-4 border border-red-700/30 hover:bg-red-800/50 transition-all">
+                    <div key={index} className="bg-card-enhanced backdrop-blur-sm rounded-xl p-4 border border-red-700/30 hover:bg-enhanced transition-all">
                       <div className="flex items-center gap-3">
                         <stat.icon className="text-yellow-400 w-6 h-6" />
                         <div>
-                          <p className="text-white/80 text-sm">{stat.label}</p>
-                          <p className="text-white text-xl font-bold">{stat.value}</p>
+                          <p className="text-enhanced text-sm">{stat.label}</p>
+                          <p className="text-enhanced-bold text-xl">{stat.value}</p>
                         </div>
                       </div>
                     </div>
@@ -414,14 +488,14 @@
               <div className="mb-8">
                 <div className="mb-6">
                   <div className="text-center">
-                    <h2 className="text-2xl font-bold text-white mb-2">
+                    <h2 className="text-2xl font-bold text-enhanced-bold mb-2">
                       {selectedCategory === 'all' ? 'Complete Performance Overview' :
                        selectedCategory === 'Lead Generation' ? '👥 Lead Generation Specialists' :
                        selectedCategory === 'Engagement' ? '💬 Client Engagement Experts' :
                        selectedCategory === 'Conversion' ? '✅ Conversion Champions' :
                        '❌ Lead Qualification Masters'}
                     </h2>
-                    <p className="text-yellow-400/80">
+                    <p className="text-gold-enhanced">
                       {selectedCategory === 'all' ? 'Comprehensive rankings across all performance metrics' :
                        selectedCategory === 'Lead Generation' ? 'Agents excelling at new lead acquisition and first contact' :
                        selectedCategory === 'Engagement' ? 'Top performers in client communication and follow-up' :
@@ -433,19 +507,19 @@
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                   
-                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-enhanced backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-yellow-400/20 rounded-lg">
                         <Target className="text-yellow-400 w-6 h-6" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-white">Conversion Masters</h3>
-                        <p className="text-yellow-400/70 text-sm">Lead-to-Customer Excellence</p>
+                        <h3 className="text-xl font-semibold text-enhanced-bold">Conversion Masters</h3>
+                        <p className="text-gold-enhanced text-sm">Lead-to-Customer Excellence</p>
                       </div>
                     </div>
                     <div className="space-y-3">
                       {rankings.conversionMasters.slice(0, 5).map((agent, index) => (
-                        <div key={agent.agent} className="flex items-center gap-3 p-3 bg-red-700/30 rounded-lg hover:bg-red-700/50 transition-all">
+                        <div key={agent.agent} className="flex items-center gap-3 p-3 bg-card-enhanced rounded-lg hover:bg-enhanced transition-all">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                             index === 0 ? 'bg-yellow-400 text-red-900' : 
                             index === 1 ? 'bg-gray-300 text-red-900' : 
@@ -455,11 +529,11 @@
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <p className="text-white font-medium text-sm">{agent.agent}</p>
-                            <p className="text-yellow-400 text-xs">{agent.customers}/{agent.total} leads</p>
+                            <p className="text-enhanced-bold font-medium text-sm">{agent.agent}</p>
+                            <p className="text-gold-enhanced text-xs">{agent.customers}/{agent.total} leads</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-white font-bold">{agent.conversionRate}%</p>
+                            <p className="text-enhanced-bold font-bold">{agent.conversionRate}%</p>
                             <div className="w-16 bg-red-900 rounded-full h-2">
                               <div 
                                 className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full transition-all duration-500"
@@ -472,7 +546,7 @@
                     </div>
                   </div>
 
-                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-enhanced backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-green-400/20 rounded-lg">
                         <MessageSquare className="text-green-400 w-6 h-6" />
@@ -664,24 +738,24 @@
                     <div key={quarter} className={`p-4 rounded-lg border-2 transition-all ${
                       activeQuarter === quarter 
                         ? 'bg-yellow-400/20 border-yellow-400' 
-                        : 'bg-red-700/20 border-red-700/50 hover:border-red-600'
+                        : 'bg-card-enhanced border-red-700/50 hover:border-red-600'
                     }`}>
                       <div className="text-center">
                         <h4 className={`text-lg font-bold mb-2 ${
-                          activeQuarter === quarter ? 'text-yellow-400' : 'text-white'
+                          activeQuarter === quarter ? 'text-gold-enhanced' : 'text-enhanced-bold'
                         }`}>{quarter} 2025</h4>
                         <div className="space-y-2">
                           <div>
-                            <p className="text-2xl font-bold text-white">{totalLeads}</p>
-                            <p className="text-xs text-white/60">Total Leads</p>
+                            <p className="text-2xl font-bold text-enhanced-bold">{totalLeads}</p>
+                            <p className="text-xs text-enhanced">Total Leads</p>
                           </div>
                           <div>
                             <p className="text-xl font-bold text-green-400">{totalConversions}</p>
-                            <p className="text-xs text-white/60">Conversions</p>
+                            <p className="text-xs text-enhanced">Conversions</p>
                           </div>
                           <div>
                             <p className="text-lg font-bold text-yellow-400">{avgConversion}%</p>
-                            <p className="text-xs text-white/60">Avg Conversion</p>
+                            <p className="text-xs text-enhanced">Avg Conversion</p>
                           </div>
                         </div>
                       </div>
@@ -691,7 +765,7 @@
               </div>
 
               <div className="mt-8 text-center">
-                <p className="text-white/60 text-sm">
+                <p className="text-enhanced text-sm">
                   Last updated: {new Date().toLocaleDateString()} • OSUS Ranking Dashboard • 
                   Showing {activeQuarter} 2025 data with {currentData.length} active agents
                 </p>
