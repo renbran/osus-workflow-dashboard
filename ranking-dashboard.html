@@ -7,8 +7,25 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.5.0/umd/recharts.js"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/lucide-react.umd.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js"></script>
+    <script>
+        // Create lucideReact object for compatibility
+        window.lucideReact = {
+            Trophy: () => React.createElement('div', {style: {display: 'inline-block'}}, '🏆'),
+            TrendingUp: () => React.createElement('div', {style: {display: 'inline-block'}}, '📈'),
+            Target: () => React.createElement('div', {style: {display: 'inline-block'}}, '🎯'),
+            DollarSign: () => React.createElement('div', {style: {display: 'inline-block'}}, '💰'),
+            Users: () => React.createElement('div', {style: {display: 'inline-block'}}, '👥'),
+            Calendar: () => React.createElement('div', {style: {display: 'inline-block'}}, '📅'),
+            Filter: () => React.createElement('div', {style: {display: 'inline-block'}}, '🔍'),
+            Award: () => React.createElement('div', {style: {display: 'inline-block'}}, '🏅'),
+            Phone: () => React.createElement('div', {style: {display: 'inline-block'}}, '📞'),
+            MessageSquare: () => React.createElement('div', {style: {display: 'inline-block'}}, '💬'),
+            CheckCircle: () => React.createElement('div', {style: {display: 'inline-block'}}, '✅'),
+            Star: () => React.createElement('div', {style: {display: 'inline-block'}}, '⭐'),
+            Activity: () => React.createElement('div', {style: {display: 'inline-block'}}, '📊')
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
@@ -134,13 +151,20 @@
 <body>
     <div id="root"></div>
     
-    <!-- Mock file system for demo -->
+    <!-- Mock file system and data service for demo -->
     <script>
         // Mock file system for the demo
         window.fs = {
             readFile: async (filename, options) => {
                 // This is a mock implementation
                 // In a real application, you would read from an actual file or API
+                return Promise.resolve(window.dataService.getMockData());
+            }
+        };
+
+        // Data service for mock data
+        window.dataService = {
+            getMockData: () => {
                 const mockData = `ID,Status,First Name,Created,Source,Agents
 1,CUSTOMER,John,15/01/2025,Website,Agent Smith
 2,HOT,Jane,20/01/2025,Referral,Agent Johnson
@@ -193,7 +217,7 @@
 49,NEW,Ursula,15/09/2025,Website,Agent Brown
 50,CONTACTED,Vale,20/09/2025,Email Campaign,Agent Johnson`;
 
-                return Promise.resolve(mockData);
+                return mockData;
             }
         };
     </script>
