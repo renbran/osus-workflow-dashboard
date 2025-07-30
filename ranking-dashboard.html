@@ -243,8 +243,19 @@
           useEffect(() => {
             const loadData = async () => {
               try {
-                // Always use mock data for reliable demonstration
-                const fileContent = window.dataService.getMockData();
+                // Try to fetch CSV file, fall back to mock data if not available
+                let fileContent;
+                try {
+                  const response = await fetch('Leads Management.csv');
+                  if (response.ok) {
+                    fileContent = await response.text();
+                  } else {
+                    throw new Error('CSV file not found');
+                  }
+                } catch (fetchError) {
+                  // Fall back to mock data
+                  fileContent = await window.dataService.getMockData();
+                }
                 
                 const lines = fileContent.split('\n').filter(line => line.trim());
                 const headers = ['ID', 'Status', 'First Name', 'Created', 'Source', 'Agents'];
