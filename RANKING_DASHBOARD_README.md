@@ -112,24 +112,18 @@ The OSUS Ranking Dashboard is a comprehensive real estate performance analytics 
 
 ## Usage Instructions
 
-### 🌐 GitHub Pages Access (Live URL)
-**Live Dashboard**: `https://renbran.github.io/osus-workflow-dashboard/ranking-dashboard.html`
+### 🌐 GitHub Pages Access (Recommended)
+**Live URL**: `https://renbran.github.io/osus-workflow-dashboard/`
 
-1. **Access anywhere**: Open the live URL in any modern web browser
-2. **No setup required**: Dashboard loads instantly with all features
-3. **Mobile responsive**: Works on desktop, tablet, and mobile devices
-4. **Always updated**: Automatically reflects latest changes when repository is updated
+**Direct Dashboard Links**:
+- 🏠 **Main Workflow Dashboard**: https://renbran.github.io/osus-workflow-dashboard/
+- 🏆 **Ranking Dashboard**: https://renbran.github.io/osus-workflow-dashboard/ranking-dashboard.html
 
-### 📱 Navigation Options
-- **Direct Access**: Use the live GitHub Pages URL above
-- **From Main Dashboard**: Visit `https://renbran.github.io/osus-workflow-dashboard/` and click "🏆 Ranking Dashboard"
-- **Local Development**: Open `ranking-dashboard.html` locally for testing
-
-### 🎮 Interactive Usage
-1. Use quarter buttons to switch between time periods (Q1, Q2, Q3 2025)
-2. Select categories from the dropdown filter for focused analysis
-3. View rankings and charts for performance insights
-4. Hover over charts and elements for detailed tooltips
+### Standalone Usage
+1. Open `ranking-dashboard.html` in a web browser
+2. Use quarter buttons to switch between time periods
+3. Select categories from the dropdown filter
+4. View rankings and charts for insights
 
 ### React Integration
 ```jsx
