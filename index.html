@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Premium Deal Management Workflow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            color: #2c2c2c;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5A1A1A 0%, #8B4513 35%, #DAA520 100%);
+            padding: 3rem 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(90, 26, 26, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0,10 Q25,0 50,10 T100,10 V20 H0 Z" fill="rgba(218,165,32,0.1)"/></svg>');
+            background-size: 200px 40px;
+            background-repeat: repeat-x;
+            animation: wave 20s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { background-position-x: 0; }
+            100% { background-position-x: 200px; }
+        }
+
+        .brand-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .osus-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 0.5rem;
+            color: #DAA520;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .properties-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: #DAA520;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .header-tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 300;
+            opacity: 0.95;
+            margin-top: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .workflow-chart {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184, 134, 11, 0.2);
+        }
+
+        .chart-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #b8860b;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .workflow-visual {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .phase-node {
+            background: linear-gradient(135deg, #800020 0%, #a0001a 100%);
+            border-radius: 15px;
+            padding: 1rem;
+            width: 200px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .phase-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(128, 0, 32, 0.4);
+            border-color: #b8860b;
+        }
+
+        .phase-node::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #b8860b;
+        }
+
+        .phase-node:last-child::after {
+            display: none;
+        }
+
+        .phase-number {
+            background: #b8860b;
+            color: #000;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+        }
+
+        .phase-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .phase-owner {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            color: #b8860b;
+        }
+
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .phase-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            border-left: 5px solid #b8860b;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .phase-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .phase-card h3 {
+            color: #b8860b;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .phase-badge {
+            background: #800020;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .phase-subtitle {
+            color: #ccc;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .stakeholders {
+            background: rgba(128, 0, 32, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .stakeholders h4 {
+            color: #b8860b;
+            margin-bottom: 0.5rem;
+        }
+
+        .stakeholder-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .stakeholder-tag {
+            background: #800020;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .responsibilities {
+            margin-bottom: 1rem;
+        }
+
+        .responsibilities h4 {
+            color: #b8860b;
+            margin-bottom: 1rem;
+        }
+
+        .responsibility-item {
+            background: rgba(184, 134, 11, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid #b8860b;
+        }
+
+        .responsibility-title {
+            font-weight: 600;
+            color: #b8860b;
+            margin-bottom: 0.5rem;
+        }
+
+        .metrics {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .metrics h4 {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-icon {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .framework {
+            background: linear-gradient(135deg, rgba(128, 0, 32, 0.2) 0%, rgba(184, 134, 11, 0.2) 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .framework h2 {
+            color: #b8860b;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .principle-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(184, 134, 11, 0.3);
+        }
+
+        .principle-icon {
+            font-size: 2rem;
+            color: #b8860b;
+            margin-bottom: 1rem;
+        }
+
+        .principle-title {
+            color: #b8860b;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            background: #800020;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            font-size: 1.1rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-visual {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .phase-node {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .phase-node::after {
+                content: '↓';
+                right: 50%;
+                bottom: -20px;
+                top: auto;
+                transform: translateX(50%);
+            }
+            
+            .phases-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(184, 134, 11, 0.3);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #800020, #b8860b);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .phase-card.active {
+            border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <div class="header">
+        <div class="brand-container">
+            <div class="osus-logo">OSUS</div>
+            <div class="properties-text">PROPERTIES</div>
+            <div class="header-tagline">Premium Deal Management Workflow | Excellence in Every Transaction</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="workflow-chart">
+            <h2 class="chart-title">Visual Workflow Overview</h2>
+            <div class="workflow-visual">
+                <div class="phase-node" data-phase="1">
+                    <div class="phase-number">1</div>
+                    <div class="phase-title">Prospect Discovery</div>
+                    <div class="phase-owner">Sales Team</div>
+                </div>
+                <div class="phase-node" data-phase="2">
+                    <div class="phase-number">2</div>
+                    <div class="phase-title">Deal Activation</div>
+                    <div class="phase-owner">Sales Team</div>
+                </div>
+                <div class="phase-node" data-phase="3">
+                    <div class="phase-number">3</div>
+                    <div class="phase-title">Registration</div>
+                    <div class="phase-owner">Admin Team</div>
+                </div>
+                <div class="phase-node" data-phase="4">
+                    <div class="phase-number">4</div>
+                    <div class="phase-title">Compliance</div>
+                    <div class="phase-owner">Dhanraj</div>
+                </div>
+                <div class="phase-node" data-phase="5">
+                    <div class="phase-number">5</div>
+                    <div class="phase-title">Finalization</div>
+                    <div class="phase-owner">Arleen & Jerome</div>
+                </div>
+                <div class="phase-node" data-phase="6">
+                    <div class="phase-number">6</div>
+                    <div class="phase-title">Commission</div>
+                    <div class="phase-owner">Gaber, Arleen & Jerome</div>
+                </div>
+                <div class="phase-node" data-phase="7">
+                    <div class="phase-number">7</div>
+                    <div class="phase-title">Payment Mgmt</div>
+                    <div class="phase-owner">Junaid & Naveen</div>
+                </div>
+                <div class="phase-node" data-phase="8">
+                    <div class="phase-number">8</div>
+                    <div class="phase-title">Processing</div>
+                    <div class="phase-owner">Junaid & Naveen</div>
+                </div>
+                <div class="phase-node" data-phase="9">
+                    <div class="phase-number">9</div>
+                    <div class="phase-title">Distribution</div>
+                    <div class="phase-owner">Junaid & Naveen</div>
+                </div>
+                <div class="phase-node" data-phase="10">
+                    <div class="phase-number">10</div>
+                    <div class="phase-title">Authorization</div>
+                    <div class="phase-owner">Junaid | Management</div>
+                </div>
+                <div class="phase-node" data-phase="11">
+                    <div class="phase-number">11</div>
+                    <div class="phase-title">Closure</div>
+                    <div class="phase-owner">Junaid & Naveen</div>
+                </div>
+                <div class="phase-node" data-phase="12">
+                    <div class="phase-number">12</div>
+                    <div class="phase-title">Analytics</div>
+                    <div class="phase-owner">Renbran</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="phases-grid">
+            <!-- Phase 1 -->
+            <div class="phase-card" id="phase-1">
+                <h3><span class="phase-badge">Phase 1</span> Prospect Discovery & Qualification</h3>
+                <div class="phase-subtitle">Lead Acquisition & Initial Assessment</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholder:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Sales Team</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Prospect Capture</div>
+                        Monitor and collect leads from all OSUS channels (digital, referrals, partnerships)
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Initial Engagement</div>
+                        Execute first touchpoint within 2 hours using OSUS premium communication standards
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Lead Classification</div>
+                        Categorize prospects using OSUS scoring matrix: Discovery → Engagement → Proposal → Qualification → Premium Ready
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Data Integrity</div>
+                        Ensure complete and accurate CRM population with all client touchpoints
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Lead response time < 2 hours</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 90% data completion rate</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Clear classification rationale documented</div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="phase-card" id="phase-2">
+                <h3><span class="phase-badge">Phase 2</span> Deal Activation & Documentation</h3>
+                <div class="phase-subtitle">Premium Lead Conversion</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholder:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Sales Team</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Deal Trigger</div>
+                        Upon "Premium Ready" status, initiate OSUS Deal Excellence Protocol
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Pre-Flight Checklist</div>
+                        Complete comprehensive deal readiness assessment
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">System Preparation</div>
+                        Populate all mandatory Odoo17 fields with verified information
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Handoff Package</div>
+                        Prepare complete client dossier for seamless transition to operations
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero handoff delays due to incomplete information</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% compliance with OSUS documentation standards</div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="phase-card" id="phase-3">
+                <h3><span class="phase-badge">Phase 3</span> Deal Registration & System Integration</h3>
+                <div class="phase-subtitle">Official Deal Acknowledgment</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Jerome</span>
+                        <span class="stakeholder-tag">Arleen</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Registration Excellence</div>
+                        Complete official deal registration with developer/principal
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Platform Management</div>
+                        Upload registration through appropriate submission portals
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">System Integration</div>
+                        Link registration to source lead ID in Bitrix24
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Status Management</div>
+                        Update system status to "Registration Confirmed"
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Same-day registration completion</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% system linkage accuracy</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero registration rejections due to errors</div>
+                </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="phase-card" id="phase-4">
+                <h3><span class="phase-badge">Phase 4</span> Client Compliance & Verification</h3>
+                <div class="phase-subtitle">Premium KYC & Documentation Excellence</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholder:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Dhanraj</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Document Collection & Verification</div>
+                        Collect all required KYC documents using OSUS premium standards
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">AML Screening & Risk Assessment</div>
+                        Execute AML checks on primary client and beneficial owners
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Final Compliance Review</div>
+                        Comprehensive review of entire document portfolio
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Quality Assurance</div>
+                        Ensure 100% regulatory compliance before progression
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% document completeness rate</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero compliance rejections</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 48-hour maximum compliance processing time</div>
+                </div>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="phase-card" id="phase-5">
+                <h3><span class="phase-badge">Phase 5</span> Deal Package Finalization</h3>
+                <div class="phase-subtitle">Pre-Approval Quality Assurance</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Arleen</span>
+                        <span class="stakeholder-tag">Jerome</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Final Audit</div>
+                        Conduct comprehensive deal package review
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Milestone Validation</div>
+                        Verify all Odoo17 checkboxes and requirements
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Quality Gate</div>
+                        Ensure deal meets OSUS premium standards
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Approval Authorization</div>
+                        Change deal status to "Approved" to unlock invoicing
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero post-approval corrections required</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% milestone completion before approval</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Same-day processing for compliant packages</div>
+                </div>
+            </div>
+
+            <!-- Phase 6 -->
+            <div class="phase-card" id="phase-6">
+                <h3><span class="phase-badge">Phase 6</span> Commission Optimization & Invoice Generation</h3>
+                <div class="phase-subtitle">Financial Excellence & Accuracy</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Gaber</span>
+                        <span class="stakeholder-tag">Arleen</span>
+                        <span class="stakeholder-tag">Jerome</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Commission Calculation</div>
+                        Calculate exact payable commission per OSUS payout policies
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Invoice Generation & Validation</div>
+                        Generate customer tax invoice in Odoo17
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Quality Control</div>
+                        Review invoice formatting and OSUS branding standards
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Developer Delivery</div>
+                        Transmit official invoice to developer/principal
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% calculation accuracy</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero invoice discrepancies</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 24-hour invoice generation from approval</div>
+                </div>
+            </div>
+
+            <!-- Phase 7 -->
+            <div class="phase-card" id="phase-7">
+                <h3><span class="phase-badge">Phase 7</span> Payment Management & Follow-up</h3>
+                <div class="phase-subtitle">Revenue Realization Excellence</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Junaid</span>
+                        <span class="stakeholder-tag">Naveen</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Invoice Delivery</div>
+                        Professional dispatch via email and client portals
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Automated Reminders</div>
+                        Configure reminder sequence (5 days, 3 days, due date, overdue)
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Acknowledgment Tracking</div>
+                        Confirm receipt and understanding by developer
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Relationship Management</div>
+                        Maintain professional communication throughout process
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% invoice delivery confirmation</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Average payment collection < 30 days</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero payment disputes due to communication issues</div>
+                </div>
+            </div>
+
+            <!-- Phase 8 -->
+            <div class="phase-card" id="phase-8">
+                <h3><span class="phase-badge">Phase 8</span> Payment Processing & Reconciliation</h3>
+                <div class="phase-subtitle">Financial Accuracy & Control</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Junaid</span>
+                        <span class="stakeholder-tag">Naveen</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Payment Verification</div>
+                        Confirm payment receipt and accuracy
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Proof Documentation</div>
+                        Upload payment confirmation in Odoo17
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Invoice Reconciliation</div>
+                        Match payments to outstanding invoices
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Status Updates</div>
+                        Trigger "Payment Received" status across all systems
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Same-day payment processing</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% reconciliation accuracy</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero payment allocation errors</div>
+                </div>
+            </div>
+
+            <!-- Phase 9 -->
+            <div class="phase-card" id="phase-9">
+                <h3><span class="phase-badge">Phase 9</span> Commission Distribution Preparation</h3>
+                <div class="phase-subtitle">Payout Excellence & Transparency</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Junaid</span>
+                        <span class="stakeholder-tag">Naveen</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Payout Batch Creation</div>
+                        Prepare internal commission distribution
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Schedule Attachment</div>
+                        Include detailed commission breakdown by recipient
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Approval Preparation</div>
+                        Package for management review and authorization
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Documentation</div>
+                        Ensure complete audit trail for all commission calculations
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero calculation errors in payout batches</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% documentation completeness</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Timely preparation for management review</div>
+                </div>
+            </div>
+
+            <!-- Phase 10 -->
+            <div class="phase-card" id="phase-10">
+                <h3><span class="phase-badge">Phase 10</span> Commission Authorization & Distribution</h3>
+                <div class="phase-subtitle">Final Approval & Payment Execution</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholder:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Junaid</span>
+                        <span class="stakeholder-tag">Management</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Management Review</div>
+                        Present payout batch for accuracy verification
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Approval Process</div>
+                        Secure management authorization for commission release
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Vendor Bill Processing</div>
+                        Approve all associated vendor bills and payments
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Payment Execution</div>
+                        Execute bank transfers or payroll uploads
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Management approval within 48 hours</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% successful payment execution</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Zero payment errors or delays</div>
+                </div>
+            </div>
+
+            <!-- Phase 11 -->
+            <div class="phase-card" id="phase-11">
+                <h3><span class="phase-badge">Phase 11</span> Deal Closure & Archival</h3>
+                <div class="phase-subtitle">Complete Transaction Lifecycle Management</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholders:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Junaid</span>
+                        <span class="stakeholder-tag">Naveen</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Completion Verification</div>
+                        Confirm all workflow steps completed successfully
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Documentation Archival</div>
+                        Archive complete deal folder with full audit trail
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">System Closure</div>
+                        Mark deal status as "Closed-Won" in Odoo17
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Quality Assessment</div>
+                        Document lessons learned and process improvements
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> 100% workflow completion verification</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Complete documentation archival</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Client satisfaction scores > 95%</div>
+                </div>
+            </div>
+
+            <!-- Phase 12 -->
+            <div class="phase-card" id="phase-12">
+                <h3><span class="phase-badge">Phase 12</span> Performance Intelligence & Optimization</h3>
+                <div class="phase-subtitle">Continuous Excellence & Strategic Insights</div>
+                
+                <div class="stakeholders">
+                    <h4>🎯 Primary Stakeholder:</h4>
+                    <div class="stakeholder-list">
+                        <span class="stakeholder-tag">Renbran</span>
+                    </div>
+                </div>
+
+                <div class="responsibilities">
+                    <h4>📋 Core Responsibilities:</h4>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Data Extraction</div>
+                        Pull comprehensive data from Sales, CRM, and Accounting modules
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Performance Analytics</div>
+                        Create weekly/monthly dashboards and KPI reports
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Bottleneck Identification</div>
+                        Analyze workflow efficiency and identify improvement opportunities
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-title">Process Optimization</div>
+                        Recommend workflow enhancements based on data analysis
+                    </div>
+                </div>
+
+                <div class="metrics">
+                    <h4>📊 Success Metrics:</h4>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Weekly reporting consistency</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Identification of 3+ optimization opportunities monthly</div>
+                    <div class="metric-item"><span class="metric-icon">✓</span> Measurable workflow efficiency improvements</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Excellence Framework -->
+        <div class="framework">
+            <h2>OSUS Workflow Excellence Framework</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">Built on Five Pillars of Premium Real Estate Excellence</p>
+            
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <div class="principle-icon">🎯</div>
+                    <div class="principle-title">Client-Centric Excellence</div>
+                    <p>Every touchpoint reflects OSUS premium standards and delivers exceptional client experiences</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">⚡</div>
+                    <div class="principle-title">Operational Precision</div>
+                    <p>Zero-error tolerance across all processes with continuous quality monitoring</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">💎</div>
+                    <div class="principle-title">Transparent Communication</div>
+                    <p>Clear accountability and progress visibility for all stakeholders</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">📈</div>
+                    <div class="principle-title">Continuous Improvement</div>
+                    <p>Data-driven optimization and enhancement of all workflows</p>
+                </div>
+                <div class="principle-card">
+                    <div class="principle-icon">🛡️</div>
+                    <div class="principle-title">Regulatory Compliance</div>
+                    <p>100% adherence to all applicable regulations and industry standards</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; padding: 2rem; background: rgba(0,0,0,0.3); border-radius: 15px;">
+                <h3 style="color: #b8860b; margin-bottom: 1rem;">Key Performance Indicators</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: left;">
+                    <div><strong>Speed to Market:</strong> Lead to deal closure timeline</div>
+                    <div><strong>Quality Excellence:</strong> Error rates and rework instances</div>
+                    <div><strong>Client Satisfaction:</strong> Net Promoter Score and feedback ratings</div>
+                    <div><strong>Financial Performance:</strong> Commission accuracy and collection efficiency</div>
+                    <div><strong>Team Productivity:</strong> Individual and team performance metrics</div>
+                    <div><strong>System Integration:</strong> Bitrix24, Odoo17, and automation efficiency</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This workflow represents OSUS's commitment to delivering exceptional real estate experiences while maintaining operational excellence and maximizing value for all stakeholders.</p>
+    </div>
+
+    <script>
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+        });
+
+        // Interactive phase highlighting
+        const phaseNodes = document.querySelectorAll('.phase-node');
+        const phaseCards = document.querySelectorAll('.phase-card');
+
+        phaseNodes.forEach((node, index) => {
+            node.addEventListener('click', () => {
+                // Remove active class from all cards
+                phaseCards.forEach(card => card.classList.remove('active'));
+                
+                // Add active class to corresponding card
+                const phaseCard = document.getElementById(`phase-${index + 1}`);
+                if (phaseCard) {
+                    phaseCard.classList.add('active');
+                    phaseCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        // Intersection Observer for auto-highlighting
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const phaseId = entry.target.id;
+                    const phaseNumber = phaseId.split('-')[1];
+                    
+                    // Remove active from all nodes
+                    phaseNodes.forEach(node => node.classList.remove('active'));
+                    
+                    // Add active to current node
+                    const currentNode = document.querySelector(`[data-phase="${phaseNumber}"]`);
+                    if (currentNode) {
+                        currentNode.classList.add('active');
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observe all phase cards
+        phaseCards.forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover effects for enhanced interactivity
+        phaseCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = '0 15px 40px rgba(128, 0, 32, 0.3)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = 'none';
+            });
+        });
+
+        // Add loading animation
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.phase-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+
+        // Add tooltips for stakeholder tags
+        const stakeholderTags = document.querySelectorAll('.stakeholder-tag');
+        stakeholderTags.forEach(tag => {
+            tag.addEventListener('mouseenter', (e) => {
+                const name = e.target.textContent;
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = `Primary contact: ${name}`;
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: #800020;
+                    color: white;
+                    padding: 0.5rem;
+                    border-radius: 5px;
+                    font-size: 0.8rem;
+                    z-index: 1000;
+                    top: ${e.pageY - 40}px;
+                    left: ${e.pageX}px;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(tooltip);
+                
+                setTimeout(() => {
+                    if (tooltip.parentNode) {
+                        tooltip.parentNode.removeChild(tooltip);
+                    }
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
