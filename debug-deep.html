@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Ranking Dashboard - Debug Version</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+            color: white;
+            margin: 0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .debug-info {
+            background: rgba(0,0,0,0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 2px solid #DAA520;
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #FF5722; }
+        .warning { color: #FF9800; }
+        
+        .test-content {
+            background: rgba(0,0,0,0.5);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        h1 { color: #DAA520; text-align: center; }
+        h2 { color: #DAA520; }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .metric-card {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #DAA520;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            color: #DAA520;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #DAA520;
+            color: black;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #B8860B;
+        }
+        
+        .agent-list {
+            margin: 1rem 0;
+        }
+        
+        .agent-item {
+            background: rgba(255,255,255,0.1);
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .rank {
+            background: #DAA520;
+            color: black;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 OSUS Dashboard Deep Debug</h1>
+    
+    <div class="debug-info">
+        <h2>🔍 Debug Information</h2>
+        <div id="debug-output">
+            <p class="warning">⏳ Initializing debug checks...</p>
+        </div>
+    </div>
+
+    <div class="test-content">
+        <h2>📊 Manual Dashboard Test</h2>
+        <p>If you can see this section, HTML and CSS are working correctly.</p>
+        
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div>📊</div>
+                <div class="metric-value" id="test-leads">0</div>
+                <div>Total Leads</div>
+            </div>
+            <div class="metric-card">
+                <div>✅</div>
+                <div class="metric-value" id="test-conversions">0</div>
+                <div>Conversions</div>
+            </div>
+            <div class="metric-card">
+                <div>👥</div>
+                <div class="metric-value" id="test-agents">0</div>
+                <div>Active Agents</div>
+            </div>
+            <div class="metric-card">
+                <div>📈</div>
+                <div class="metric-value" id="test-rate">0%</div>
+                <div>Conversion Rate</div>
+            </div>
+        </div>
+        
+        <div>
+            <h3>🎯 Quarter Selection Test</h3>
+            <button onclick="testQuarter('Q1')">Q1 2025</button>
+            <button onclick="testQuarter('Q2')">Q2 2025</button>
+            <button onclick="testQuarter('Q3')">Q3 2025</button>
+            <button onclick="loadTestData()">Load Test Data</button>
+        </div>
+        
+        <div>
+            <h3>🏆 Top Agents - <span id="current-quarter">Q1 2025</span></h3>
+            <div class="agent-list" id="agent-rankings">
+                <div class="agent-item">
+                    <div><span class="rank">1</span>Agent Smith</div>
+                    <div>28.5%</div>
+                </div>
+                <div class="agent-item">
+                    <div><span class="rank">2</span>Agent Johnson</div>
+                    <div>25.7%</div>
+                </div>
+                <div class="agent-item">
+                    <div><span class="rank">3</span>Agent Brown</div>
+                    <div>22.2%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Starting deep debug analysis...');
+        
+        // Debug tracking
+        const debugOutput = document.getElementById('debug-output');
+        let debugInfo = [];
+        
+        function addDebugInfo(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.push(`[${timestamp}] ${message}`);
+            console.log(message);
+            updateDebugDisplay();
+        }
+        
+        function updateDebugDisplay() {
+            debugOutput.innerHTML = debugInfo.map(info => {
+                if (info.includes('ERROR')) return `<p class="error">${info}</p>`;
+                if (info.includes('SUCCESS')) return `<p class="success">${info}</p>`;
+                if (info.includes('WARNING')) return `<p class="warning">${info}</p>`;
+                return `<p>${info}</p>`;
+            }).join('');
+        }
+        
+        // Test data
+        const testData = {
+            Q1: { leads: 150, conversions: 32, agents: 8, rate: 21.3 },
+            Q2: { leads: 168, conversions: 38, agents: 8, rate: 22.6 },
+            Q3: { leads: 142, conversions: 35, agents: 8, rate: 24.6 }
+        };
+        
+        // Test functions
+        function testQuarter(quarter) {
+            try {
+                addDebugInfo(`SUCCESS: Quarter ${quarter} button clicked`);
+                document.getElementById('current-quarter').textContent = quarter + ' 2025';
+                
+                const data = testData[quarter];
+                if (data) {
+                    document.getElementById('test-leads').textContent = data.leads;
+                    document.getElementById('test-conversions').textContent = data.conversions;
+                    document.getElementById('test-agents').textContent = data.agents;
+                    document.getElementById('test-rate').textContent = data.rate + '%';
+                    addDebugInfo(`SUCCESS: Updated metrics for ${quarter}`);
+                } else {
+                    addDebugInfo(`ERROR: No data found for quarter ${quarter}`);
+                }
+            } catch (error) {
+                addDebugInfo(`ERROR: Failed to switch to quarter ${quarter}: ${error.message}`);
+            }
+        }
+        
+        function loadTestData() {
+            try {
+                addDebugInfo('SUCCESS: Loading test data...');
+                testQuarter('Q1');
+                addDebugInfo('SUCCESS: Test data loaded successfully');
+            } catch (error) {
+                addDebugInfo(`ERROR: Failed to load test data: ${error.message}`);
+            }
+        }
+        
+        // Browser and environment checks
+        function runDiagnostics() {
+            addDebugInfo('🔍 Running browser diagnostics...');
+            
+            // Check browser info
+            addDebugInfo(`Browser: ${navigator.userAgent}`);
+            addDebugInfo(`JavaScript enabled: ${typeof JavaScript !== 'undefined' ? 'YES' : 'NO'}`);
+            addDebugInfo(`DOM ready: ${document.readyState}`);
+            
+            // Check DOM elements
+            const testElements = ['debug-output', 'test-leads', 'current-quarter'];
+            testElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    addDebugInfo(`SUCCESS: Element '${id}' found`);
+                } else {
+                    addDebugInfo(`ERROR: Element '${id}' not found`);
+                }
+            });
+            
+            // Check CSS
+            const bodyStyle = window.getComputedStyle(document.body);
+            const bgColor = bodyStyle.backgroundColor;
+            addDebugInfo(`Body background: ${bgColor}`);
+            
+            if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
+                addDebugInfo('WARNING: Background gradient may not be loading');
+            } else {
+                addDebugInfo('SUCCESS: Background styling applied');
+            }
+            
+            // Test JavaScript execution
+            try {
+                const testDiv = document.createElement('div');
+                testDiv.textContent = 'Test element created';
+                addDebugInfo('SUCCESS: JavaScript DOM manipulation working');
+            } catch (error) {
+                addDebugInfo(`ERROR: JavaScript DOM manipulation failed: ${error.message}`);
+            }
+            
+            // Check for common issues
+            if (window.location.protocol === 'file:') {
+                addDebugInfo('WARNING: Running from file:// protocol - some features may be limited');
+            }
+            
+            addDebugInfo('✅ Diagnostics complete');
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                addDebugInfo('SUCCESS: DOMContentLoaded event fired');
+                runDiagnostics();
+                loadTestData();
+            });
+        } else {
+            addDebugInfo('SUCCESS: DOM already ready');
+            runDiagnostics();
+            loadTestData();
+        }
+        
+        // Additional error handling
+        window.addEventListener('error', function(event) {
+            addDebugInfo(`ERROR: Global error caught: ${event.error ? event.error.message : event.message}`);
+        });
+        
+        addDebugInfo('🎯 Debug script loaded successfully');
+        
+        // Force visible test after 2 seconds
+        setTimeout(function() {
+            addDebugInfo('⏰ 2-second timeout test - if you can see this, JavaScript timing is working');
+            
+            // Force update all test elements
+            const elements = {
+                'test-leads': '150',
+                'test-conversions': '32', 
+                'test-agents': '8',
+                'test-rate': '21.3%'
+            };
+            
+            Object.entries(elements).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                    addDebugInfo(`SUCCESS: Force updated ${id} to ${value}`);
+                } else {
+                    addDebugInfo(`ERROR: Could not find element ${id} for force update`);
+                }
+            });
+        }, 2000);
+    </script>
+</body>
+</html>

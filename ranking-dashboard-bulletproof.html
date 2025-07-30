@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Ranking Dashboard - Bulletproof Version</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5A1A1A 0%, #8B4513 35%, #DAA520 100%);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .osus-logo {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: #DAA520;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: #ffffff;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .navigation {
+            background: rgba(128, 0, 32, 0.9);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-link {
+            color: #DAA520;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(218, 165, 32, 0.1);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: rgba(218, 165, 32, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(218, 165, 32, 0.3);
+            border-color: #DAA520;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .controls {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+        }
+
+        .controls h2 {
+            color: #DAA520;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .control-section {
+            text-align: center;
+        }
+
+        .control-section h3 {
+            color: #DAA520;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .quarter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quarter-btn {
+            background: rgba(218, 165, 32, 0.2);
+            border: 2px solid #DAA520;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .quarter-btn:hover {
+            background: rgba(218, 165, 32, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .quarter-btn.active {
+            background: #DAA520;
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.4);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.2);
+            border-color: #DAA520;
+        }
+
+        .metric-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .rankings-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(218, 165, 32, 0.2);
+        }
+
+        .section-title {
+            color: #DAA520;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .ranking-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border-left: 4px solid #DAA520;
+            transition: all 0.3s ease;
+        }
+
+        .ranking-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.2);
+        }
+
+        .ranking-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(218, 165, 32, 0.2);
+        }
+
+        .ranking-icon {
+            font-size: 1.5rem;
+        }
+
+        .ranking-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #DAA520;
+        }
+
+        .agent-list {
+            margin: 0;
+        }
+
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .agent-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(218, 165, 32, 0.3);
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .agent-rank {
+            background: #DAA520;
+            color: #000000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .agent-metric {
+            color: #DAA520;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid rgba(218, 165, 32, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #DAA520;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #DAA520;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .control-group {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .quarter-buttons {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .osus-logo {
+                font-size: 2rem;
+                letter-spacing: 3px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Indicator -->
+    <div class="status-indicator" id="status">🔄 Loading...</div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="osus-logo">OSUS</div>
+        <div class="header-subtitle">Real Estate Performance Analytics & Rankings</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 Workflow Dashboard</a>
+            <a href="ranking-dashboard-bulletproof.html" class="nav-link active">🏆 Ranking Dashboard</a>
+            <a href="test.html" class="nav-link">🔧 Test Page</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Controls -->
+        <div class="controls">
+            <h2>📊 Performance Dashboard Controls</h2>
+            <div class="control-group">
+                <div class="control-section">
+                    <h3>📅 Select Quarter</h3>
+                    <div class="quarter-buttons">
+                        <button class="quarter-btn active" id="q1-btn" onclick="switchQuarter('Q1')">Q1 2025</button>
+                        <button class="quarter-btn" id="q2-btn" onclick="switchQuarter('Q2')">Q2 2025</button>
+                        <button class="quarter-btn" id="q3-btn" onclick="switchQuarter('Q3')">Q3 2025</button>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <h3>📊 Current Period</h3>
+                    <p>Showing data for: <strong><span id="current-quarter-display">Q1 2025</span></strong></p>
+                    <p>Last updated: <strong><span id="last-updated">Loading...</span></strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value" id="total-leads">150</div>
+                <div class="metric-label">Total Leads</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">✅</div>
+                <div class="metric-value" id="total-conversions">32</div>
+                <div class="metric-label">Total Conversions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">👥</div>
+                <div class="metric-value" id="active-agents">8</div>
+                <div class="metric-label">Active Agents</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📈</div>
+                <div class="metric-value" id="avg-conversion">21.3%</div>
+                <div class="metric-label">Avg Conversion Rate</div>
+            </div>
+        </div>
+
+        <!-- Rankings Sections -->
+        <div class="rankings-section">
+            <h2 class="section-title">🏆 Top Performers - <span id="quarter-title">Q1 2025</span></h2>
+            
+            <div class="ranking-grid">
+                <!-- Conversion Masters -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">🎯</div>
+                        <div class="ranking-title">Conversion Masters</div>
+                    </div>
+                    <div class="agent-list" id="conversion-list">
+                        <!-- Will be populated by JavaScript -->
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">28.5%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">25.7%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">22.2%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engagement Leaders -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">💬</div>
+                        <div class="ranking-title">Engagement Leaders</div>
+                    </div>
+                    <div class="agent-list" id="engagement-list">
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">85.2%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">82.1%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">78.9%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lead Volume Champions -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">👥</div>
+                        <div class="ranking-title">Lead Volume Champions</div>
+                    </div>
+                    <div class="agent-list" id="lead-list">
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">35 leads</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">31 leads</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">27 leads</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Specialists -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">⭐</div>
+                        <div class="ranking-title">Quality Specialists</div>
+                    </div>
+                    <div class="agent-list" id="quality-list">
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">92.1%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">88.4%</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">85.6%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Rankings -->
+        <div class="rankings-section">
+            <h2 class="section-title">📈 Additional Performance Metrics</h2>
+            
+            <div class="ranking-grid">
+                <!-- Closing Champions -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">🏆</div>
+                        <div class="ranking-title">Closing Champions</div>
+                    </div>
+                    <div class="agent-list" id="closing-list">
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">10 customers</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">8 customers</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">6 customers</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow-up Experts -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">📞</div>
+                        <div class="ranking-title">Follow-up Experts</div>
+                    </div>
+                    <div class="agent-list" id="followup-list">
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">1</div>
+                                <div class="agent-name">Agent Smith</div>
+                            </div>
+                            <div class="agent-metric">28 contacts</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">2</div>
+                                <div class="agent-name">Agent Johnson</div>
+                            </div>
+                            <div class="agent-metric">25 contacts</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-info">
+                                <div class="agent-rank">3</div>
+                                <div class="agent-name">Agent Brown</div>
+                            </div>
+                            <div class="agent-metric">22 contacts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>OSUS Properties - Premium Deal Management System</strong></p>
+        <p>Showing <span id="footer-quarter">Q1 2025</span> data with <span id="footer-agents">8</span> active agents</p>
+        <p>Dashboard Status: <span id="dashboard-status">✅ Active</span></p>
+    </div>
+
+    <script>
+        // Data for all quarters
+        const performanceData = {
+            Q1: {
+                totalLeads: 150,
+                totalConversions: 32,
+                activeAgents: 8,
+                avgConversion: 21.3,
+                agents: [
+                    { name: 'Agent Smith', conversionRate: 28.5, engagementRate: 85.2, totalLeads: 35, qualityScore: 92.1, customers: 10, followUps: 28 },
+                    { name: 'Agent Johnson', conversionRate: 25.7, engagementRate: 78.9, totalLeads: 31, qualityScore: 88.4, customers: 8, followUps: 25 },
+                    { name: 'Agent Brown', conversionRate: 22.2, engagementRate: 82.1, totalLeads: 27, qualityScore: 85.6, customers: 6, followUps: 22 },
+                    { name: 'Agent Davis', conversionRate: 20.8, engagementRate: 76.3, totalLeads: 24, qualityScore: 83.2, customers: 5, followUps: 19 },
+                    { name: 'Agent Wilson', conversionRate: 18.9, engagementRate: 74.5, totalLeads: 22, qualityScore: 79.8, customers: 4, followUps: 17 }
+                ]
+            },
+            Q2: {
+                totalLeads: 168,
+                totalConversions: 38,
+                activeAgents: 8,
+                avgConversion: 22.6,
+                agents: [
+                    { name: 'Agent Brown', conversionRate: 31.2, engagementRate: 87.5, totalLeads: 32, qualityScore: 94.2, customers: 10, followUps: 28 },
+                    { name: 'Agent Smith', conversionRate: 29.8, engagementRate: 84.1, totalLeads: 34, qualityScore: 91.7, customers: 10, followUps: 29 },
+                    { name: 'Agent Johnson', conversionRate: 26.3, engagementRate: 80.2, totalLeads: 30, qualityScore: 87.9, customers: 8, followUps: 24 },
+                    { name: 'Agent Wilson', conversionRate: 23.1, engagementRate: 78.8, totalLeads: 26, qualityScore: 84.5, customers: 6, followUps: 21 },
+                    { name: 'Agent Davis', conversionRate: 21.7, engagementRate: 75.4, totalLeads: 23, qualityScore: 81.2, customers: 5, followUps: 18 }
+                ]
+            },
+            Q3: {
+                totalLeads: 142,
+                totalConversions: 35,
+                activeAgents: 8,
+                avgConversion: 24.6,
+                agents: [
+                    { name: 'Agent Johnson', conversionRate: 33.1, engagementRate: 89.2, totalLeads: 29, qualityScore: 95.8, customers: 10, followUps: 26 },
+                    { name: 'Agent Smith', conversionRate: 30.5, engagementRate: 86.7, totalLeads: 31, qualityScore: 93.4, customers: 9, followUps: 27 },
+                    { name: 'Agent Brown', conversionRate: 28.9, engagementRate: 84.3, totalLeads: 28, qualityScore: 90.1, customers: 8, followUps: 24 },
+                    { name: 'Agent Wilson', conversionRate: 25.2, engagementRate: 81.6, totalLeads: 25, qualityScore: 86.7, customers: 6, followUps: 21 },
+                    { name: 'Agent Miller', conversionRate: 22.8, engagementRate: 78.2, totalLeads: 22, qualityScore: 83.5, customers: 5, followUps: 18 }
+                ]
+            }
+        };
+
+        let currentQuarter = 'Q1';
+
+        // Function to update status indicator
+        function updateStatus(message, isError = false) {
+            const statusEl = document.getElementById('status');
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.style.background = isError ? 'rgba(255, 0, 0, 0.8)' : 'rgba(0, 128, 0, 0.8)';
+            }
+            console.log('Status:', message);
+        }
+
+        // Function to safely get element
+        function safeGetElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.error(`Element with id '${id}' not found`);
+                return null;
+            }
+            return element;
+        }
+
+        // Function to safely set text content
+        function safeSetText(id, text) {
+            const element = safeGetElement(id);
+            if (element) {
+                element.textContent = text;
+                return true;
+            }
+            return false;
+        }
+
+        // Function to switch quarters
+        function switchQuarter(quarter) {
+            try {
+                updateStatus(`🔄 Switching to ${quarter}...`);
+                
+                currentQuarter = quarter;
+                
+                // Update button states
+                document.querySelectorAll('.quarter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const activeBtn = safeGetElement(quarter.toLowerCase() + '-btn');
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+                
+                // Update displays
+                const quarterText = quarter + ' 2025';
+                safeSetText('current-quarter-display', quarterText);
+                safeSetText('quarter-title', quarterText);
+                safeSetText('footer-quarter', quarterText);
+                
+                // Update metrics
+                updateMetrics();
+                updateRankings();
+                
+                updateStatus(`✅ ${quarter} 2025 loaded`);
+                
+            } catch (error) {
+                console.error('Error switching quarter:', error);
+                updateStatus(`❌ Error: ${error.message}`, true);
+            }
+        }
+
+        // Function to update metrics
+        function updateMetrics() {
+            try {
+                const data = performanceData[currentQuarter];
+                if (!data) {
+                    throw new Error(`No data for quarter ${currentQuarter}`);
+                }
+                
+                safeSetText('total-leads', data.totalLeads);
+                safeSetText('total-conversions', data.totalConversions);
+                safeSetText('active-agents', data.activeAgents);
+                safeSetText('avg-conversion', data.avgConversion + '%');
+                safeSetText('footer-agents', data.activeAgents);
+                
+                console.log(`Metrics updated for ${currentQuarter}:`, data);
+                
+            } catch (error) {
+                console.error('Error updating metrics:', error);
+                updateStatus(`❌ Metrics error: ${error.message}`, true);
+            }
+        }
+
+        // Function to update rankings
+        function updateRankings() {
+            try {
+                const data = performanceData[currentQuarter];
+                if (!data || !data.agents) {
+                    throw new Error(`No agent data for quarter ${currentQuarter}`);
+                }
+                
+                const agents = [...data.agents];
+                
+                // Update each ranking list
+                updateRankingList('conversion-list', agents, 'conversionRate', '%');
+                updateRankingList('engagement-list', agents, 'engagementRate', '%');
+                updateRankingList('lead-list', agents, 'totalLeads', ' leads');
+                updateRankingList('quality-list', agents, 'qualityScore', '%');
+                updateRankingList('closing-list', agents, 'customers', ' customers');
+                updateRankingList('followup-list', agents, 'followUps', ' contacts');
+                
+                console.log(`Rankings updated for ${currentQuarter}`);
+                
+            } catch (error) {
+                console.error('Error updating rankings:', error);
+                updateStatus(`❌ Rankings error: ${error.message}`, true);
+            }
+        }
+
+        // Function to update a specific ranking list
+        function updateRankingList(listId, agents, metric, suffix) {
+            try {
+                const container = safeGetElement(listId);
+                if (!container) return;
+                
+                // Sort agents by the metric
+                const sortedAgents = agents.sort((a, b) => b[metric] - a[metric]).slice(0, 5);
+                
+                // Clear existing content
+                container.innerHTML = '';
+                
+                // Add each agent
+                sortedAgents.forEach((agent, index) => {
+                    const agentItem = document.createElement('div');
+                    agentItem.className = 'agent-item';
+                    
+                    const value = typeof agent[metric] === 'number' && agent[metric] % 1 !== 0 ? 
+                        agent[metric].toFixed(1) : agent[metric];
+                    
+                    agentItem.innerHTML = `
+                        <div class="agent-info">
+                            <div class="agent-rank">${index + 1}</div>
+                            <div class="agent-name">${agent.name}</div>
+                        </div>
+                        <div class="agent-metric">${value}${suffix}</div>
+                    `;
+                    
+                    container.appendChild(agentItem);
+                });
+                
+            } catch (error) {
+                console.error(`Error updating ranking list ${listId}:`, error);
+            }
+        }
+
+        // Function to update timestamp
+        function updateTimestamp() {
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            safeSetText('last-updated', timeString);
+        }
+
+        // Initialize dashboard
+        function initializeDashboard() {
+            try {
+                updateStatus('🚀 Initializing dashboard...');
+                
+                // Set initial timestamp
+                updateTimestamp();
+                
+                // Load initial data
+                updateMetrics();
+                updateRankings();
+                
+                // Set up auto-refresh
+                setInterval(updateTimestamp, 30000); // Update every 30 seconds
+                
+                updateStatus('✅ Dashboard ready');
+                
+                // Hide status after 3 seconds
+                setTimeout(() => {
+                    const statusEl = document.getElementById('status');
+                    if (statusEl) {
+                        statusEl.style.opacity = '0.7';
+                        statusEl.textContent = '✅ Live';
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                updateStatus(`❌ Init error: ${error.message}`, true);
+            }
+        }
+
+        // Start when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDashboard);
+        } else {
+            initializeDashboard();
+        }
+
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            console.error('Global error:', event.error);
+            updateStatus(`❌ Error: ${event.error ? event.error.message : 'Unknown error'}`, true);
+        });
+
+        // Test function that can be called from browser console
+        window.testDashboard = function() {
+            console.log('=== DASHBOARD TEST ===');
+            console.log('Current quarter:', currentQuarter);
+            console.log('Performance data:', performanceData);
+            console.log('Available functions:', ['switchQuarter', 'updateMetrics', 'updateRankings']);
+            updateStatus('🔧 Test completed - check console');
+        };
+
+        console.log('✅ Dashboard script loaded successfully');
+        console.log('💡 Run testDashboard() in console for debugging');
+    </script>
+</body>
+</html>
