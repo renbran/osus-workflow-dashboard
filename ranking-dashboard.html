@@ -9,26 +9,22 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js"></script>
     <script>
-        // Simple icon components as functions
+        // Create lucideReact object for compatibility
         window.lucideReact = {
-            Trophy: () => '🏆',
-            TrendingUp: () => '📈', 
-            Target: () => '🎯',
-            DollarSign: () => '💰',
-            Users: () => '👥',
-            Calendar: () => '📅',
-            Filter: () => '🔍',
-            Award: () => '🏅',
-            Phone: () => '📞',
-            MessageSquare: () => '💬',
-            CheckCircle: () => '✅',
-            Star: () => '⭐',
-            Activity: () => '📊'
+            Trophy: () => React.createElement('div', {style: {display: 'inline-block'}}, '🏆'),
+            TrendingUp: () => React.createElement('div', {style: {display: 'inline-block'}}, '📈'),
+            Target: () => React.createElement('div', {style: {display: 'inline-block'}}, '🎯'),
+            DollarSign: () => React.createElement('div', {style: {display: 'inline-block'}}, '💰'),
+            Users: () => React.createElement('div', {style: {display: 'inline-block'}}, '👥'),
+            Calendar: () => React.createElement('div', {style: {display: 'inline-block'}}, '📅'),
+            Filter: () => React.createElement('div', {style: {display: 'inline-block'}}, '🔍'),
+            Award: () => React.createElement('div', {style: {display: 'inline-block'}}, '🏅'),
+            Phone: () => React.createElement('div', {style: {display: 'inline-block'}}, '📞'),
+            MessageSquare: () => React.createElement('div', {style: {display: 'inline-block'}}, '💬'),
+            CheckCircle: () => React.createElement('div', {style: {display: 'inline-block'}}, '✅'),
+            Star: () => React.createElement('div', {style: {display: 'inline-block'}}, '⭐'),
+            Activity: () => React.createElement('div', {style: {display: 'inline-block'}}, '📊')
         };
-        
-        // Ensure React globals are available
-        window.React = React;
-        window.ReactDOM = ReactDOM;
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
