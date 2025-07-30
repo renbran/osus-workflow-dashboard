@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Ranking Dashboard - Real Estate Performance Analytics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5A1A1A 0%, #8B4513 35%, #DAA520 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .osus-logo {
+            font-size: 3rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: #DAA520;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: #ffffff;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .navigation {
+            background: rgba(128, 0, 32, 0.9);
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #DAA520;
+            text-decoration: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            background: rgba(218, 165, 32, 0.1);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(218, 165, 32, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(218, 165, 32, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(218, 165, 32, 0.2);
+        }
+
+        .controls h2 {
+            color: #DAA520;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .quarter-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quarter-btn {
+            background: rgba(218, 165, 32, 0.2);
+            border: 2px solid #DAA520;
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .quarter-btn:hover {
+            background: rgba(218, 165, 32, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .quarter-btn.active {
+            background: #DAA520;
+            color: #000000;
+        }
+
+        .category-select {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #DAA520;
+            color: #ffffff;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .category-select option {
+            background: #2d1b1b;
+            color: #ffffff;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.2);
+        }
+
+        .metric-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .rankings-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(218, 165, 32, 0.2);
+        }
+
+        .section-title {
+            color: #DAA520;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .ranking-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border-left: 4px solid #DAA520;
+        }
+
+        .ranking-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ranking-icon {
+            font-size: 1.5rem;
+        }
+
+        .ranking-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #DAA520;
+        }
+
+        .agent-list {
+            margin: 0;
+        }
+
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .agent-rank {
+            background: #DAA520;
+            color: #000000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .agent-metric {
+            color: #DAA520;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid rgba(218, 165, 32, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.2rem;
+            color: #DAA520;
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .control-group {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .quarter-buttons {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="osus-logo">OSUS</div>
+        <div class="header-subtitle">Real Estate Performance Analytics & Rankings</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">🏠 Workflow Dashboard</a>
+            <a href="ranking-dashboard-simple.html" class="nav-link active">🏆 Ranking Dashboard</a>
+            <a href="test.html" class="nav-link">🔧 Test Page</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Controls -->
+        <div class="controls">
+            <h2>📊 Performance Dashboard Controls</h2>
+            <div class="control-group">
+                <div>
+                    <h3 style="color: #DAA520; margin-bottom: 1rem;">📅 Select Quarter</h3>
+                    <div class="quarter-buttons">
+                        <button class="quarter-btn active" onclick="setActiveQuarter('Q1')">Q1 2025</button>
+                        <button class="quarter-btn" onclick="setActiveQuarter('Q2')">Q2 2025</button>
+                        <button class="quarter-btn" onclick="setActiveQuarter('Q3')">Q3 2025</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: #DAA520; margin-bottom: 1rem;">🔍 Filter Category</h3>
+                    <select class="category-select" onchange="setCategory(this.value)">
+                        <option value="all">🏆 All Categories</option>
+                        <option value="lead">👥 Lead Generation</option>
+                        <option value="engagement">💬 Engagement</option>
+                        <option value="conversion">✅ Conversion</option>
+                        <option value="quality">⭐ Quality</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value" id="total-leads">150</div>
+                <div class="metric-label">Total Leads</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">✅</div>
+                <div class="metric-value" id="total-conversions">32</div>
+                <div class="metric-label">Total Conversions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">👥</div>
+                <div class="metric-value" id="active-agents">8</div>
+                <div class="metric-label">Active Agents</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📈</div>
+                <div class="metric-value" id="avg-conversion">21.3%</div>
+                <div class="metric-label">Avg Conversion Rate</div>
+            </div>
+        </div>
+
+        <!-- Rankings Sections -->
+        <div class="rankings-section">
+            <h2 class="section-title">🏆 Top Performers - <span id="current-quarter">Q1 2025</span></h2>
+            
+            <div class="ranking-grid">
+                <!-- Conversion Masters -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">🎯</div>
+                        <div class="ranking-title">Conversion Masters</div>
+                    </div>
+                    <div class="agent-list" id="conversion-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="chart-container">
+                        📊 Conversion Rate Chart
+                    </div>
+                </div>
+
+                <!-- Engagement Leaders -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">💬</div>
+                        <div class="ranking-title">Engagement Leaders</div>
+                    </div>
+                    <div class="agent-list" id="engagement-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="chart-container">
+                        📊 Engagement Rate Chart
+                    </div>
+                </div>
+
+                <!-- Lead Generators -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">👥</div>
+                        <div class="ranking-title">Lead Volume Champions</div>
+                    </div>
+                    <div class="agent-list" id="lead-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="chart-container">
+                        📊 Lead Volume Chart
+                    </div>
+                </div>
+
+                <!-- Quality Specialists -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">⭐</div>
+                        <div class="ranking-title">Quality Specialists</div>
+                    </div>
+                    <div class="agent-list" id="quality-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="chart-container">
+                        📊 Quality Score Chart
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Rankings -->
+        <div class="rankings-section">
+            <h2 class="section-title">📈 Performance Analytics</h2>
+            
+            <div class="ranking-grid">
+                <!-- Closing Champions -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">🏆</div>
+                        <div class="ranking-title">Closing Champions</div>
+                    </div>
+                    <div class="agent-list" id="closing-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Follow-up Experts -->
+                <div class="ranking-card">
+                    <div class="ranking-header">
+                        <div class="ranking-icon">📞</div>
+                        <div class="ranking-title">Follow-up Experts</div>
+                    </div>
+                    <div class="agent-list" id="followup-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Last updated: <span id="last-updated"></span> • OSUS Properties - Premium Deal Management System</p>
+        <p>Showing <span id="quarter-info">Q1 2025</span> data with <span id="agent-count">8</span> active agents</p>
+    </div>
+
+    <script>
+        // Mock data for demonstration
+        const mockData = {
+            Q1: {
+                totalLeads: 150,
+                totalConversions: 32,
+                activeAgents: 8,
+                avgConversion: 21.3,
+                agents: [
+                    { name: 'Agent Smith', conversionRate: 28.5, engagementRate: 85.2, totalLeads: 35, qualityScore: 92.1, customers: 10, followUps: 28 },
+                    { name: 'Agent Johnson', conversionRate: 25.7, engagementRate: 78.9, totalLeads: 31, qualityScore: 88.4, customers: 8, followUps: 25 },
+                    { name: 'Agent Brown', conversionRate: 22.2, engagementRate: 82.1, totalLeads: 27, qualityScore: 85.6, customers: 6, followUps: 22 },
+                    { name: 'Agent Davis', conversionRate: 20.8, engagementRate: 76.3, totalLeads: 24, qualityScore: 83.2, customers: 5, followUps: 19 },
+                    { name: 'Agent Wilson', conversionRate: 18.9, engagementRate: 74.5, totalLeads: 22, qualityScore: 79.8, customers: 4, followUps: 17 },
+                    { name: 'Agent Miller', conversionRate: 16.4, engagementRate: 71.2, totalLeads: 19, qualityScore: 76.3, customers: 3, followUps: 15 },
+                    { name: 'Agent Garcia', conversionRate: 14.7, engagementRate: 68.9, totalLeads: 17, qualityScore: 72.5, customers: 2, followUps: 13 },
+                    { name: 'Agent Martinez', conversionRate: 12.5, engagementRate: 65.4, totalLeads: 16, qualityScore: 69.8, customers: 2, followUps: 11 }
+                ]
+            },
+            Q2: {
+                totalLeads: 168,
+                totalConversions: 38,
+                activeAgents: 8,
+                avgConversion: 22.6,
+                agents: [
+                    { name: 'Agent Brown', conversionRate: 31.2, engagementRate: 87.5, totalLeads: 32, qualityScore: 94.2, customers: 10, followUps: 28 },
+                    { name: 'Agent Smith', conversionRate: 29.8, engagementRate: 84.1, totalLeads: 34, qualityScore: 91.7, customers: 10, followUps: 29 },
+                    { name: 'Agent Johnson', conversionRate: 26.3, engagementRate: 80.2, totalLeads: 30, qualityScore: 87.9, customers: 8, followUps: 24 },
+                    { name: 'Agent Wilson', conversionRate: 23.1, engagementRate: 78.8, totalLeads: 26, qualityScore: 84.5, customers: 6, followUps: 21 },
+                    { name: 'Agent Davis', conversionRate: 21.7, engagementRate: 75.4, totalLeads: 23, qualityScore: 81.2, customers: 5, followUps: 18 },
+                    { name: 'Agent Miller', conversionRate: 19.4, engagementRate: 73.1, totalLeads: 21, qualityScore: 78.6, customers: 4, followUps: 16 },
+                    { name: 'Agent Garcia', conversionRate: 17.8, engagementRate: 70.5, totalLeads: 19, qualityScore: 75.8, customers: 3, followUps: 14 },
+                    { name: 'Agent Martinez', conversionRate: 15.9, engagementRate: 67.9, totalLeads: 17, qualityScore: 72.4, customers: 3, followUps: 12 }
+                ]
+            },
+            Q3: {
+                totalLeads: 142,
+                totalConversions: 35,
+                activeAgents: 8,
+                avgConversion: 24.6,
+                agents: [
+                    { name: 'Agent Johnson', conversionRate: 33.1, engagementRate: 89.2, totalLeads: 29, qualityScore: 95.8, customers: 10, followUps: 26 },
+                    { name: 'Agent Smith', conversionRate: 30.5, engagementRate: 86.7, totalLeads: 31, qualityScore: 93.4, customers: 9, followUps: 27 },
+                    { name: 'Agent Brown', conversionRate: 28.9, engagementRate: 84.3, totalLeads: 28, qualityScore: 90.1, customers: 8, followUps: 24 },
+                    { name: 'Agent Wilson', conversionRate: 25.2, engagementRate: 81.6, totalLeads: 25, qualityScore: 86.7, customers: 6, followUps: 21 },
+                    { name: 'Agent Miller', conversionRate: 22.8, engagementRate: 78.2, totalLeads: 22, qualityScore: 83.5, customers: 5, followUps: 18 },
+                    { name: 'Agent Davis', conversionRate: 20.7, engagementRate: 76.8, totalLeads: 20, qualityScore: 80.9, customers: 4, followUps: 16 },
+                    { name: 'Agent Garcia', conversionRate: 18.5, engagementRate: 73.4, totalLeads: 18, qualityScore: 77.2, customers: 3, followUps: 14 },
+                    { name: 'Agent Martinez', conversionRate: 16.1, engagementRate: 70.1, totalLeads: 16, qualityScore: 74.6, customers: 3, followUps: 12 }
+                ]
+            }
+        };
+
+        let currentQuarter = 'Q1';
+        let currentCategory = 'all';
+
+        // Initialize dashboard
+        function initDashboard() {
+            updateMetrics();
+            updateRankings();
+            updateLastUpdated();
+        }
+
+        // Set active quarter
+        function setActiveQuarter(quarter) {
+            currentQuarter = quarter;
+            
+            // Update button states
+            document.querySelectorAll('.quarter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update display
+            document.getElementById('current-quarter').textContent = quarter + ' 2025';
+            document.getElementById('quarter-info').textContent = quarter + ' 2025';
+            
+            updateMetrics();
+            updateRankings();
+        }
+
+        // Set category filter
+        function setCategory(category) {
+            currentCategory = category;
+            updateRankings();
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            const data = mockData[currentQuarter];
+            document.getElementById('total-leads').textContent = data.totalLeads;
+            document.getElementById('total-conversions').textContent = data.totalConversions;
+            document.getElementById('active-agents').textContent = data.activeAgents;
+            document.getElementById('avg-conversion').textContent = data.avgConversion + '%';
+            document.getElementById('agent-count').textContent = data.activeAgents;
+        }
+
+        // Update rankings
+        function updateRankings() {
+            const data = mockData[currentQuarter];
+            const agents = [...data.agents];
+
+            // Conversion leaders
+            const conversionLeaders = agents.sort((a, b) => b.conversionRate - a.conversionRate).slice(0, 5);
+            updateAgentList('conversion-list', conversionLeaders, 'conversionRate', '%');
+
+            // Engagement leaders
+            const engagementLeaders = agents.sort((a, b) => b.engagementRate - a.engagementRate).slice(0, 5);
+            updateAgentList('engagement-list', engagementLeaders, 'engagementRate', '%');
+
+            // Lead volume champions
+            const leadChampions = agents.sort((a, b) => b.totalLeads - a.totalLeads).slice(0, 5);
+            updateAgentList('lead-list', leadChampions, 'totalLeads', ' leads');
+
+            // Quality specialists
+            const qualitySpecialists = agents.sort((a, b) => b.qualityScore - a.qualityScore).slice(0, 5);
+            updateAgentList('quality-list', qualitySpecialists, 'qualityScore', '%');
+
+            // Closing champions
+            const closingChampions = agents.sort((a, b) => b.customers - a.customers).slice(0, 5);
+            updateAgentList('closing-list', closingChampions, 'customers', ' customers');
+
+            // Follow-up experts
+            const followUpExperts = agents.sort((a, b) => b.followUps - a.followUps).slice(0, 5);
+            updateAgentList('followup-list', followUpExperts, 'followUps', ' contacts');
+        }
+
+        // Update agent list
+        function updateAgentList(containerId, agents, metric, suffix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            agents.forEach((agent, index) => {
+                const agentItem = document.createElement('div');
+                agentItem.className = 'agent-item';
+                
+                const value = typeof agent[metric] === 'number' && agent[metric] % 1 !== 0 ? 
+                    agent[metric].toFixed(1) : agent[metric];
+                
+                agentItem.innerHTML = `
+                    <div class="agent-info">
+                        <div class="agent-rank">${index + 1}</div>
+                        <div class="agent-name">${agent.name}</div>
+                    </div>
+                    <div class="agent-metric">${value}${suffix}</div>
+                `;
+                
+                container.appendChild(agentItem);
+            });
+        }
+
+        // Update last updated timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('last-updated').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard initializing...');
+            initDashboard();
+            console.log('Dashboard initialized successfully!');
+        });
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effects to cards
+            const cards = document.querySelectorAll('.metric-card, .ranking-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // Auto-refresh every 30 seconds
+            setInterval(updateLastUpdated, 30000);
+        });
+    </script>
+</body>
+</html>
