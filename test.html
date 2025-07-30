@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Dashboard Test Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #5A1A1A 0%, #8B4513 35%, #DAA520 100%);
+            color: white;
+            padding: 2rem;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .container {
+            background: rgba(0,0,0,0.3);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #DAA520;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .status {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .links {
+            margin-top: 2rem;
+        }
+        .links a {
+            color: #DAA520;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 2px solid #DAA520;
+            border-radius: 8px;
+            margin: 0 0.5rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .links a:hover {
+            background: #DAA520;
+            color: #5A1A1A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 OSUS Dashboard Test</h1>
+        <div class="status success">✅ GitHub Pages is working correctly!</div>
+        <p>If you can see this page, the deployment is successful.</p>
+        <div class="links">
+            <a href="index.html">🏠 Main Dashboard</a>
+            <a href="ranking-dashboard.html">🏆 Ranking Dashboard</a>
+        </div>
+        <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
+            Deployment Time: <span id="timestamp"></span>
+        </p>
+    </div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
