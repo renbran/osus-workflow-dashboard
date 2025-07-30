@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSUS Ranking Dashboard - Real Estate Performance Analytics</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/umd/recharts.js"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/lucide-react.umd.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(127, 29, 29, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(251, 191, 36, 0.8);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(251, 191, 36, 1);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- Mock file system for demo -->
+    <script>
+        // Mock file system for the demo
+        window.fs = {
+            readFile: async (filename, options) => {
+                // This is a mock implementation
+                // In a real application, you would read from an actual file or API
+                const mockData = `ID,Status,First Name,Created,Source,Agents
+1,CUSTOMER,John,15/01/2025,Website,Agent Smith
+2,HOT,Jane,20/01/2025,Referral,Agent Johnson
+3,CONTACTED,Bob,25/01/2025,Social Media,Agent Smith
+4,NEW,Alice,30/01/2025,Website,Agent Brown
+5,CUSTOMER,Charlie,05/02/2025,Email Campaign,Agent Johnson
+6,HOT,Diana,10/02/2025,Website,Agent Smith
+7,OPTIONS SENT,Eva,15/02/2025,Referral,Agent Brown
+8,CUSTOMER,Frank,20/02/2025,Social Media,Agent Johnson
+9,CONTACTED,Grace,25/02/2025,Website,Agent Smith
+10,HOT,Henry,01/03/2025,Email Campaign,Agent Brown
+11,CUSTOMER,Ivy,05/03/2025,Referral,Agent Johnson
+12,NEW,Jack,10/03/2025,Website,Agent Smith
+13,CONTACTED,Kate,15/03/2025,Social Media,Agent Brown
+14,OPTIONS SENT,Liam,20/03/2025,Website,Agent Johnson
+15,CUSTOMER,Mia,25/03/2025,Email Campaign,Agent Smith
+16,HOT,Noah,30/03/2025,Referral,Agent Brown
+17,CONTACTED,Olivia,05/04/2025,Website,Agent Johnson
+18,NEW,Paul,10/04/2025,Social Media,Agent Smith
+19,CUSTOMER,Quinn,15/04/2025,Website,Agent Brown
+20,HOT,Rachel,20/04/2025,Email Campaign,Agent Johnson
+21,OPTIONS SENT,Sam,25/04/2025,Referral,Agent Smith
+22,CONTACTED,Tina,30/04/2025,Website,Agent Brown
+23,CUSTOMER,Uma,05/05/2025,Social Media,Agent Johnson
+24,HOT,Victor,10/05/2025,Website,Agent Smith
+25,NEW,Wendy,15/05/2025,Email Campaign,Agent Brown
+26,CONTACTED,Xander,20/05/2025,Referral,Agent Johnson
+27,CUSTOMER,Yara,25/05/2025,Website,Agent Smith
+28,HOT,Zoe,30/05/2025,Social Media,Agent Brown
+29,OPTIONS SENT,Adam,05/06/2025,Website,Agent Johnson
+30,CONTACTED,Beth,10/06/2025,Email Campaign,Agent Smith
+31,CUSTOMER,Carl,15/06/2025,Referral,Agent Brown
+32,HOT,Dora,20/06/2025,Website,Agent Johnson
+33,NEW,Eric,25/06/2025,Social Media,Agent Smith
+34,CONTACTED,Faye,30/06/2025,Website,Agent Brown
+35,CUSTOMER,Greg,05/07/2025,Email Campaign,Agent Johnson
+36,HOT,Hope,10/07/2025,Referral,Agent Smith
+37,OPTIONS SENT,Ivan,15/07/2025,Website,Agent Brown
+38,CONTACTED,Jade,20/07/2025,Social Media,Agent Johnson
+39,CUSTOMER,Kyle,25/07/2025,Website,Agent Smith
+40,HOT,Luna,30/07/2025,Email Campaign,Agent Brown
+41,NEW,Mark,05/08/2025,Referral,Agent Johnson
+42,CONTACTED,Nina,10/08/2025,Website,Agent Smith
+43,CUSTOMER,Omar,15/08/2025,Social Media,Agent Brown
+44,HOT,Piper,20/08/2025,Website,Agent Johnson
+45,OPTIONS SENT,Quincy,25/08/2025,Email Campaign,Agent Smith
+46,CONTACTED,Ruby,30/08/2025,Referral,Agent Brown
+47,CUSTOMER,Steve,05/09/2025,Website,Agent Johnson
+48,HOT,Tara,10/09/2025,Social Media,Agent Smith
+49,NEW,Ursula,15/09/2025,Website,Agent Brown
+50,CONTACTED,Vale,20/09/2025,Email Campaign,Agent Johnson`;
+
+                return Promise.resolve(mockData);
+            }
+        };
+    </script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } = Recharts;
+        const { Trophy, TrendingUp, Target, DollarSign, Users, Calendar, Filter, Award, Phone, MessageSquare, CheckCircle, Star, Activity } = lucideReact;
+
+        const Dashboard = () => {
+          const [activeQuarter, setActiveQuarter] = useState('Q1');
+          const [selectedCategory, setSelectedCategory] = useState('all');
+          const [data, setData] = useState(null);
+          const [loading, setLoading] = useState(true);
+
+          const industryCategories = {
+            "Lead Generation": { statuses: ["NEW", "ATTEMPT"], icon: Users, color: "#3B82F6" },
+            "Engagement": { statuses: ["CONTACTED", "OPTIONS SENT"], icon: MessageSquare, color: "#10B981" },
+            "Conversion": { statuses: ["HOT", "CUSTOMER"], icon: CheckCircle, color: "#F59E0B" },
+            "Non-Viable": { statuses: ["UNSUCCESSFUL", "Junk Lead", "IDLE"], icon: Activity, color: "#EF4444" }
+          };
+
+          useEffect(() => {
+            const loadData = async () => {
+              try {
+                const fileContent = await window.fs.readFile('Leads Management.csv', { encoding: 'utf8' });
+                
+                const lines = fileContent.split('\n').filter(line => line.trim());
+                const headers = ['ID', 'Status', 'First Name', 'Created', 'Source', 'Agents'];
+                
+                const rows = lines.slice(1).map(line => {
+                  const values = [];
+                  let current = '';
+                  let inQuotes = false;
+                  
+                  for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                      inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                      values.push(current.trim());
+                      current = '';
+                    } else {
+                      current += char;
+                    }
+                  }
+                  values.push(current.trim());
+                  
+                  const row = {};
+                  headers.forEach((header, index) => {
+                    const value = values[index] || '';
+                    row[header] = value.replace(/"/g, '');
+                    if (header === 'ID') {
+                      row[header] = parseInt(value) || 0;
+                    }
+                  });
+                  return row;
+                }).filter(row => row.ID && row.Agents);
+
+                const parseDate = (dateStr) => {
+                  if (!dateStr) return null;
+                  const parts = dateStr.split('/');
+                  if (parts.length === 3) {
+                    const day = parseInt(parts[0]);
+                    const month = parseInt(parts[1]);
+                    const year = parseInt(parts[2]);
+                    return new Date(year, month - 1, day);
+                  }
+                  return null;
+                };
+
+                const dataWithDates = rows.map(row => {
+                  const date = parseDate(row.Created);
+                  let quarter = null;
+                  if (date) {
+                    const month = date.getMonth() + 1;
+                    if (month >= 1 && month <= 3) quarter = 'Q1';
+                    else if (month >= 4 && month <= 6) quarter = 'Q2';
+                    else if (month >= 7 && month <= 9) quarter = 'Q3';
+                    else quarter = 'Q4';
+                  }
+                  return { ...row, parsedDate: date, quarter };
+                });
+
+                const calculateAgentMetrics = (quarterData, quarterName) => {
+                  const agentGroups = {};
+                  
+                  quarterData.forEach(row => {
+                    if (!row.Agents || row.Agents === 'CRM System') return;
+                    if (!agentGroups[row.Agents]) {
+                      agentGroups[row.Agents] = [];
+                    }
+                    agentGroups[row.Agents].push(row);
+                  });
+
+                  return Object.keys(agentGroups).map(agent => {
+                    const leads = agentGroups[agent];
+                    const total = leads.length;
+                    
+                    const statusCounts = {};
+                    const sourceCounts = {};
+                    
+                    leads.forEach(lead => {
+                      statusCounts[lead.Status] = (statusCounts[lead.Status] || 0) + 1;
+                      sourceCounts[lead.Source] = (sourceCounts[lead.Source] || 0) + 1;
+                    });
+                    
+                    const customers = statusCounts['CUSTOMER'] || 0;
+                    const hot = statusCounts['HOT'] || 0;
+                    const contacted = statusCounts['CONTACTED'] || 0;
+                    const optionsSent = statusCounts['OPTIONS SENT'] || 0;
+                    const newLeads = statusCounts['NEW'] || 0;
+                    const attempts = statusCounts['ATTEMPT'] || 0;
+                    
+                    const safePercent = (num, den) => den > 0 ? Math.round((num / den * 100) * 100) / 100 : 0;
+                    
+                    return {
+                      agent,
+                      quarter: quarterName,
+                      total,
+                      customers,
+                      hot,
+                      contacted,
+                      optionsSent,
+                      newLeads,
+                      attempts,
+                      sourceDiversity: Object.keys(sourceCounts).length,
+                      
+                      conversionRate: safePercent(customers, total),
+                      engagementRate: safePercent(contacted + optionsSent, total),
+                      hotLeadRate: safePercent(hot, total),
+                      responseRate: safePercent(total - newLeads, total),
+                      leadQualityScore: safePercent(hot + customers, total),
+                      followUpEfficiency: safePercent(contacted, attempts + contacted),
+                      closingEfficiency: safePercent(customers, hot + optionsSent),
+                      
+                      statusBreakdown: statusCounts,
+                      sourceBreakdown: sourceCounts
+                    };
+                  });
+                };
+
+                const q1Data = dataWithDates.filter(row => row.quarter === 'Q1');
+                const q2Data = dataWithDates.filter(row => row.quarter === 'Q2');
+                const q3Data = dataWithDates.filter(row => row.quarter === 'Q3');
+
+                const q1Metrics = calculateAgentMetrics(q1Data, 'Q1');
+                const q2Metrics = calculateAgentMetrics(q2Data, 'Q2');
+                const q3Metrics = calculateAgentMetrics(q3Data, 'Q3');
+
+                setData({
+                  Q1: q1Metrics,
+                  Q2: q2Metrics,
+                  Q3: q3Metrics,
+                  rawData: dataWithDates,
+                  quarterCounts: {
+                    Q1: q1Data.length,
+                    Q2: q2Data.length,
+                    Q3: q3Data.length
+                  }
+                });
+
+              } catch (error) {
+                console.error('Error loading data:', error);
+              } finally {
+                setLoading(false);
+              }
+            };
+
+            loadData();
+          }, []);
+
+          if (loading || !data) {
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-red-900 to-red-800 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+                  <p className="text-yellow-400 text-xl font-semibold">Analyzing Performance Data...</p>
+                  <p className="text-white/60 text-sm mt-2">Processing leads across quarters</p>
+                </div>
+              </div>
+            );
+          }
+
+          const currentData = data[activeQuarter] || [];
+          
+          const getRankingsByCategory = () => {
+            let filteredData = currentData;
+            
+            if (selectedCategory !== 'all') {
+              const categoryStatuses = industryCategories[selectedCategory]?.statuses || [];
+              filteredData = currentData.filter(agent => {
+                const categoryLeads = categoryStatuses.reduce((sum, status) => {
+                  return sum + (agent.statusBreakdown[status] || 0);
+                }, 0);
+                return categoryLeads > 0;
+              });
+            }
+            
+            return {
+              conversionMasters: [...filteredData].sort((a, b) => b.conversionRate - a.conversionRate).slice(0, 8),
+              engagementLeaders: [...filteredData].sort((a, b) => b.engagementRate - a.engagementRate).slice(0, 8),
+              leadGenerators: [...filteredData].sort((a, b) => b.total - a.total).slice(0, 8),
+              qualitySpecialists: [...filteredData].sort((a, b) => b.leadQualityScore - a.leadQualityScore).slice(0, 8),
+              closingChampions: [...filteredData].sort((a, b) => b.customers - a.customers).slice(0, 8),
+              followUpExperts: [...filteredData].sort((a, b) => b.followUpEfficiency - a.followUpEfficiency).slice(0, 8)
+            };
+          };
+
+          const rankings = getRankingsByCategory();
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-red-900 via-red-800 to-red-900 p-6">
+              <div className="mb-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="relative">
+                    <Trophy className="text-yellow-400 w-10 h-10" />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold text-white">OSUS Ranking Dashboard</h1>
+                    <p className="text-yellow-400/80 text-lg">Real Estate Performance Analytics & Rankings</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <Calendar className="text-yellow-400 w-6 h-6" />
+                    <div className="flex bg-red-800/50 backdrop-blur-sm rounded-xl p-2 border border-red-700/50">
+                      {['Q1', 'Q2', 'Q3'].map(quarter => (
+                        <button
+                          key={quarter}
+                          onClick={() => setActiveQuarter(quarter)}
+                          className={`px-6 py-3 rounded-lg transition-all duration-300 font-semibold ${
+                            activeQuarter === quarter 
+                              ? 'bg-yellow-400 text-red-900 shadow-lg transform scale-105' 
+                              : 'text-white hover:bg-red-700/50 hover:text-yellow-400'
+                          }`}
+                        >
+                          {quarter} 2025
+                          <span className="block text-xs opacity-75">
+                            {data.quarterCounts[quarter]} leads
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <Filter className="text-yellow-400 w-5 h-5" />
+                    <select 
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="bg-red-800/50 border border-red-700/50 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 backdrop-blur-sm"
+                    >
+                      <option value="all">🏆 All Categories</option>
+                      <option value="Lead Generation">👥 Lead Generation</option>
+                      <option value="Engagement">💬 Engagement</option>
+                      <option value="Conversion">✅ Conversion</option>
+                      <option value="Non-Viable">❌ Non-Viable</option>
+                    </select>
+                    <div className="text-xs text-yellow-400/70">
+                      {selectedCategory === 'all' ? 'Showing all metrics' : 
+                       selectedCategory === 'Lead Generation' ? 'NEW + ATTEMPT leads' :
+                       selectedCategory === 'Engagement' ? 'CONTACTED + OPTIONS SENT' :
+                       selectedCategory === 'Conversion' ? 'HOT + CUSTOMER' :
+                       'UNSUCCESSFUL + Junk + IDLE'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  {[
+                    { label: 'Total Leads', value: currentData.reduce((sum, agent) => sum + agent.total, 0), icon: Users, color: 'blue' },
+                    { label: 'Total Conversions', value: currentData.reduce((sum, agent) => sum + agent.customers, 0), icon: CheckCircle, color: 'green' },
+                    { label: 'Active Agents', value: currentData.length, icon: Star, color: 'purple' },
+                    { label: 'Avg Conversion Rate', value: `${(currentData.reduce((sum, agent) => sum + agent.conversionRate, 0) / currentData.length || 0).toFixed(1)}%`, icon: TrendingUp, color: 'yellow' }
+                  ].map((stat, index) => (
+                    <div key={index} className="bg-red-800/30 backdrop-blur-sm rounded-xl p-4 border border-red-700/30 hover:bg-red-800/50 transition-all">
+                      <div className="flex items-center gap-3">
+                        <stat.icon className="text-yellow-400 w-6 h-6" />
+                        <div>
+                          <p className="text-white/80 text-sm">{stat.label}</p>
+                          <p className="text-white text-xl font-bold">{stat.value}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <div className="mb-6">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-white mb-2">
+                      {selectedCategory === 'all' ? 'Complete Performance Overview' :
+                       selectedCategory === 'Lead Generation' ? '👥 Lead Generation Specialists' :
+                       selectedCategory === 'Engagement' ? '💬 Client Engagement Experts' :
+                       selectedCategory === 'Conversion' ? '✅ Conversion Champions' :
+                       '❌ Lead Qualification Masters'}
+                    </h2>
+                    <p className="text-yellow-400/80">
+                      {selectedCategory === 'all' ? 'Comprehensive rankings across all performance metrics' :
+                       selectedCategory === 'Lead Generation' ? 'Agents excelling at new lead acquisition and first contact' :
+                       selectedCategory === 'Engagement' ? 'Top performers in client communication and follow-up' :
+                       selectedCategory === 'Conversion' ? 'Leaders in converting prospects to customers' :
+                       'Specialists in lead qualification and pipeline management'}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                  
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-yellow-400/20 rounded-lg">
+                        <Target className="text-yellow-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Conversion Masters</h3>
+                        <p className="text-yellow-400/70 text-sm">Lead-to-Customer Excellence</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {rankings.conversionMasters.slice(0, 5).map((agent, index) => (
+                        <div key={agent.agent} className="flex items-center gap-3 p-3 bg-red-700/30 rounded-lg hover:bg-red-700/50 transition-all">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                            index === 0 ? 'bg-yellow-400 text-red-900' : 
+                            index === 1 ? 'bg-gray-300 text-red-900' : 
+                            index === 2 ? 'bg-yellow-600 text-white' : 
+                            'bg-red-600 text-white'
+                          }`}>
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-white font-medium text-sm">{agent.agent}</p>
+                            <p className="text-yellow-400 text-xs">{agent.customers}/{agent.total} leads</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-white font-bold">{agent.conversionRate}%</p>
+                            <div className="w-16 bg-red-900 rounded-full h-2">
+                              <div 
+                                className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${Math.min(agent.conversionRate * 2, 100)}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-green-400/20 rounded-lg">
+                        <MessageSquare className="text-green-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Engagement Leaders</h3>
+                        <p className="text-green-400/70 text-sm">Contact & Follow-up Champions</p>
+                      </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={rankings.engagementLeaders.slice(0, 5)}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="agent" 
+                          tick={{ fill: 'white', fontSize: 10 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={80}
+                        />
+                        <YAxis tick={{ fill: 'white', fontSize: 12 }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#7f1d1d', 
+                            border: '1px solid #dc2626',
+                            borderRadius: '8px',
+                            color: 'white'
+                          }}
+                          formatter={(value) => [`${value}%`, 'Engagement Rate']}
+                        />
+                        <Bar dataKey="engagementRate" fill="#10B981" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-blue-400/20 rounded-lg">
+                        <Users className="text-blue-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Lead Volume Champions</h3>
+                        <p className="text-blue-400/70 text-sm">Highest Lead Handlers</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {rankings.leadGenerators.slice(0, 5).map((agent, index) => (
+                        <div key={agent.agent} className="flex items-center justify-between p-3 bg-red-700/30 rounded-lg hover:bg-red-700/50 transition-all">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+                              index < 3 ? 'bg-blue-400 text-red-900' : 'bg-red-600 text-white'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="text-white font-medium text-sm">{agent.agent}</p>
+                              <p className="text-blue-400 text-xs">{agent.sourceDiversity} sources</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-white font-bold text-lg">{agent.total}</p>
+                            <p className="text-blue-400 text-xs">leads</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-yellow-400/20 rounded-lg">
+                        <Award className="text-yellow-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Closing Champions</h3>
+                        <p className="text-yellow-400/70 text-sm">Deal Completion Masters</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {rankings.closingChampions.slice(0, 5).map((agent, index) => (
+                        <div key={agent.agent} className="p-4 bg-gradient-to-r from-red-700/30 to-yellow-900/20 rounded-lg hover:from-red-700/50 hover:to-yellow-900/30 transition-all">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-lg font-bold ${
+                                index === 0 ? 'text-yellow-400' : 'text-white'
+                              }`}>#{index + 1}</span>
+                              <p className="text-white font-medium text-sm">{agent.agent}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-yellow-400 font-bold text-xl">{agent.customers}</p>
+                              <p className="text-white text-xs">deals closed</p>
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-white/70">Closing Rate: {agent.closingEfficiency}%</span>
+                            <span className="text-yellow-400">{agent.hot} hot leads</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-orange-400/20 rounded-lg">
+                        <Phone className="text-orange-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Follow-up Experts</h3>
+                        <p className="text-orange-400/70 text-sm">Persistence & Response Leaders</p>
+                      </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <LineChart data={rankings.followUpExperts.slice(0, 5)}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="agent" 
+                          tick={{ fill: 'white', fontSize: 10 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={80}
+                        />
+                        <YAxis tick={{ fill: 'white', fontSize: 12 }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#7f1d1d', 
+                            border: '1px solid #dc2626',
+                            borderRadius: '8px',
+                            color: 'white'
+                          }}
+                          formatter={(value) => [`${value}%`, 'Follow-up Efficiency']}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="followUpEfficiency" 
+                          stroke="#FB923C" 
+                          strokeWidth={3}
+                          dot={{ fill: '#FB923C', strokeWidth: 2, r: 6 }}
+                          activeDot={{ r: 8, fill: '#FB923C' }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="bg-red-800/50 backdrop-blur-sm rounded-xl p-6 border border-red-700/50 hover:shadow-2xl transition-all duration-300">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-purple-400/20 rounded-lg">
+                        <Star className="text-purple-400 w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-white">Quality Specialists</h3>
+                        <p className="text-purple-400/70 text-sm">High-Value Lead Nurturers</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {rankings.qualitySpecialists.slice(0, 5).map((agent, index) => (
+                        <div key={agent.agent} className="flex items-center justify-between p-3 bg-red-700/30 rounded-lg hover:bg-red-700/50 transition-all">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+                              index < 3 ? 'bg-purple-400 text-red-900' : 'bg-red-600 text-white'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="text-white font-medium text-sm">{agent.agent}</p>
+                              <p className="text-purple-400 text-xs">{agent.hot + agent.customers} quality leads</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-white font-bold">{agent.leadQualityScore}%</p>
+                            <p className="text-purple-400 text-xs">quality score</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {['Q1', 'Q2', 'Q3'].map(quarter => {
+                  const quarterData = data[quarter] || [];
+                  const totalLeads = quarterData.reduce((sum, agent) => sum + agent.total, 0);
+                  const totalConversions = quarterData.reduce((sum, agent) => sum + agent.customers, 0);
+                  const avgConversion = quarterData.length > 0 ? 
+                    (quarterData.reduce((sum, agent) => sum + agent.conversionRate, 0) / quarterData.length).toFixed(1) : 0;
+                  
+                  return (
+                    <div key={quarter} className={`p-4 rounded-lg border-2 transition-all ${
+                      activeQuarter === quarter 
+                        ? 'bg-yellow-400/20 border-yellow-400' 
+                        : 'bg-red-700/20 border-red-700/50 hover:border-red-600'
+                    }`}>
+                      <div className="text-center">
+                        <h4 className={`text-lg font-bold mb-2 ${
+                          activeQuarter === quarter ? 'text-yellow-400' : 'text-white'
+                        }`}>{quarter} 2025</h4>
+                        <div className="space-y-2">
+                          <div>
+                            <p className="text-2xl font-bold text-white">{totalLeads}</p>
+                            <p className="text-xs text-white/60">Total Leads</p>
+                          </div>
+                          <div>
+                            <p className="text-xl font-bold text-green-400">{totalConversions}</p>
+                            <p className="text-xs text-white/60">Conversions</p>
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-yellow-400">{avgConversion}%</p>
+                            <p className="text-xs text-white/60">Avg Conversion</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 text-center">
+                <p className="text-white/60 text-sm">
+                  Last updated: {new Date().toLocaleDateString()} • OSUS Ranking Dashboard • 
+                  Showing {activeQuarter} 2025 data with {currentData.length} active agents
+                </p>
+              </div>
+            </div>
+          );
+        };
+
+        // Render the dashboard
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
