@@ -1,0 +1,19 @@
+# Enable GitHub Pages for this repository
+# This file forces GitHub to recognize this as a static site
+
+# Site settings
+title: "OSUS Premium Deal Management Workflow Dashboard"
+description: "A comprehensive workflow visualization and management system for real estate deal processing"
+url: "https://renbran.github.io"
+baseurl: "/osus-workflow-dashboard"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - LICENSE
+  - CONTRIBUTING.md
