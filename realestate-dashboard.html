@@ -320,42 +320,57 @@
     </div>
 
     <script>
-        // Sample data
+        // Real data from CSV processing
         const sampleData = {
             Q1: {
-                totalLeads: 2847,
-                totalConversions: 287,
-                avgConversion: 10.1,
+                totalLeads: 4570,
+                totalConversions: 641,
+                avgConversion: 14.0,
                 agents: [
-                    { name: 'Sarah Johnson', conversionRate: 15.2, totalLeads: 142, customers: 22, engagementRate: 67.3, quality: 18.5 },
-                    { name: 'Mike Chen', conversionRate: 14.8, totalLeads: 158, customers: 23, engagementRate: 71.5, quality: 19.2 },
-                    { name: 'Emily Rodriguez', conversionRate: 13.9, totalLeads: 134, customers: 19, engagementRate: 65.8, quality: 17.8 },
-                    { name: 'David Kim', conversionRate: 13.2, totalLeads: 167, customers: 22, engagementRate: 69.2, quality: 16.9 },
-                    { name: 'Lisa Thompson', conversionRate: 12.8, totalLeads: 189, customers: 24, engagementRate: 72.1, quality: 18.3 }
+                    { name: 'Ahmad Walid', conversionRate: 100.0, totalLeads: 1, customers: 1, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Rahul Kaipuram', conversionRate: 100.0, totalLeads: 130, customers: 130, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Mohamed Nader', conversionRate: 100.0, totalLeads: 4, customers: 4, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Paul Ngalame', conversionRate: 100.0, totalLeads: 31, customers: 31, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Omar Mounir', conversionRate: 89.3, totalLeads: 103, customers: 92, engagementRate: 100.0, quality: 93.6 },
+                    { name: 'Igor Khomenko', conversionRate: 88.9, totalLeads: 9, customers: 8, engagementRate: 100.0, quality: 93.3 },
+                    { name: 'Faraaz Arif', conversionRate: 88.2, totalLeads: 17, customers: 15, engagementRate: 100.0, quality: 92.9 },
+                    { name: 'Yulia Vlasenko', conversionRate: 80.8, totalLeads: 26, customers: 21, engagementRate: 100.0, quality: 88.5 },
+                    { name: 'Andrey Chyhaev', conversionRate: 77.8, totalLeads: 9, customers: 7, engagementRate: 100.0, quality: 86.7 },
+                    { name: 'Adnan Arif', conversionRate: 11.9, totalLeads: 4240, customers: 503, engagementRate: 100.0, quality: 47.1 }
                 ]
             },
             Q2: {
-                totalLeads: 3152,
-                totalConversions: 347,
-                avgConversion: 11.0,
+                totalLeads: 5936,
+                totalConversions: 1316,
+                avgConversion: 22.2,
                 agents: [
-                    { name: 'Sarah Johnson', conversionRate: 16.1, totalLeads: 156, customers: 25, engagementRate: 69.2, quality: 19.8 },
-                    { name: 'Mike Chen', conversionRate: 15.3, totalLeads: 172, customers: 26, engagementRate: 73.2, quality: 20.1 },
-                    { name: 'Emily Rodriguez', conversionRate: 14.2, totalLeads: 148, customers: 21, engagementRate: 67.4, quality: 18.6 },
-                    { name: 'David Kim', conversionRate: 13.8, totalLeads: 181, customers: 25, engagementRate: 71.8, quality: 17.9 },
-                    { name: 'Lisa Thompson', conversionRate: 13.4, totalLeads: 203, customers: 27, engagementRate: 74.5, quality: 19.2 }
+                    { name: 'Ahmad Walid', conversionRate: 100.0, totalLeads: 1, customers: 1, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Mohamed Nader', conversionRate: 100.0, totalLeads: 11, customers: 11, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Paul Ngalame', conversionRate: 100.0, totalLeads: 76, customers: 76, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Rahul Kaipuram', conversionRate: 100.0, totalLeads: 246, customers: 246, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Omar Mounir', conversionRate: 95.9, totalLeads: 122, customers: 117, engagementRate: 100.0, quality: 97.5 },
+                    { name: 'Igor Khomenko', conversionRate: 95.7, totalLeads: 46, customers: 44, engagementRate: 100.0, quality: 97.4 },
+                    { name: 'Faraaz Arif', conversionRate: 93.6, totalLeads: 47, customers: 44, engagementRate: 100.0, quality: 96.2 },
+                    { name: 'Yulia Vlasenko', conversionRate: 88.9, totalLeads: 54, customers: 48, engagementRate: 100.0, quality: 93.3 },
+                    { name: 'Andrey Chyhaev', conversionRate: 68.2, totalLeads: 22, customers: 15, engagementRate: 100.0, quality: 80.9 },
+                    { name: 'Adnan Arif', conversionRate: 20.6, totalLeads: 5311, customers: 1094, engagementRate: 99.9, quality: 52.0 }
                 ]
             },
             Q3: {
-                totalLeads: 3634,
-                totalConversions: 436,
-                avgConversion: 12.0,
+                totalLeads: 1802,
+                totalConversions: 1029,
+                avgConversion: 57.1,
                 agents: [
-                    { name: 'Sarah Johnson', conversionRate: 17.3, totalLeads: 168, customers: 29, engagementRate: 71.8, quality: 21.2 },
-                    { name: 'Mike Chen', conversionRate: 16.8, totalLeads: 184, customers: 31, engagementRate: 75.1, quality: 22.0 },
-                    { name: 'Emily Rodriguez', conversionRate: 15.1, totalLeads: 162, customers: 24, engagementRate: 69.8, quality: 19.8 },
-                    { name: 'David Kim', conversionRate: 14.6, totalLeads: 195, customers: 28, engagementRate: 73.5, quality: 19.2 },
-                    { name: 'Lisa Thompson', conversionRate: 14.2, totalLeads: 218, customers: 31, engagementRate: 76.3, quality: 20.8 }
+                    { name: 'Paul Ngalame', conversionRate: 100.0, totalLeads: 64, customers: 64, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Rahul Kaipuram', conversionRate: 100.0, totalLeads: 230, customers: 230, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Omar Mounir', conversionRate: 100.0, totalLeads: 91, customers: 91, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Faraaz Arif', conversionRate: 100.0, totalLeads: 62, customers: 62, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Igor Khomenko', conversionRate: 100.0, totalLeads: 46, customers: 46, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Yulia Vlasenko', conversionRate: 100.0, totalLeads: 57, customers: 57, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Andrey Chyhaev', conversionRate: 100.0, totalLeads: 27, customers: 27, engagementRate: 100.0, quality: 100.0 },
+                    { name: 'Mohamed Nader', conversionRate: 90.9, totalLeads: 11, customers: 10, engagementRate: 100.0, quality: 94.5 },
+                    { name: 'Ahmad Walid', conversionRate: 75.0, totalLeads: 4, customers: 3, engagementRate: 100.0, quality: 85.0 },
+                    { name: 'Adnan Arif', conversionRate: 30.7, totalLeads: 1210, customers: 371, engagementRate: 99.9, quality: 58.4 }
                 ]
             }
         };
