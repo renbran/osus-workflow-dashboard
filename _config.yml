@@ -8,7 +8,7 @@ url: "https://renbran.github.io"
 baseurl: "/osus-workflow-dashboard"
 
 # Build settings
-markdown: kramdown
+markdown: `kramdown
 highlighter: rouge
 theme: minima
 
